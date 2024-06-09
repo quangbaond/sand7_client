@@ -90,7 +90,7 @@ onMounted(() => {
                     </a-button>
                 </a-form-item>
                 <a-space align="center">
-                    <a-button type="link" class="link" click="router.push('/register')">Đăng ký</a-button>
+                    <a-button type="link" class="link" @click="router.push('/register')">Đăng ký</a-button>
                     <a-button type="link" class="link" @click="router.push('/register')">CSKH</a-button>
                     <a-button type="link" class="link" @click="router.push('/forgot-password')">Quên mật
                         khẩu</a-button>
