@@ -107,7 +107,7 @@ onMounted(() => {
     align-items: center;
     height: 100vh;
     /* background-color: #f0f0f0; */
-    background-image: url(@/assets/images/bg_login.png);
+    background-image: url(@/assets/images/bg_login.PNG);
     background-size: cover;
     background-position: center;
     width: 100%;
