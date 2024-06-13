@@ -6,16 +6,25 @@ import iconDeposit from '@/assets/images/icons/profile/deposit.svg'
 import { CaretRightOutlined, HomeOutlined } from '@ant-design/icons-vue';
 import { ref } from 'vue';
 import axios from '@/common/axios.js';
-import router from '../router';
+import { useRouter } from 'vue-router';
 
 const user = ref(getStorage('user'))
 const staticUrl = import.meta.env.VITE_APP_STATIC_URL ?? 'http://localhost:3000'
 const formattedBalanceUser = ref(formatCurrency(user.balance))
 const formattedBetTodayUser = ref(formatCurrency(user.betToday))
+const historyBets = ref([]);
+const router = useRouter();
 onMounted(() => {
     // console.log(user)
-    axios.get('/me/profile').then((res) => {
+    axios.get(`/me/profile`).then((res) => {
         user.value = res.user;
+    }).catch((err) => {
+        console.log(err);
+        router.push('/login');
+    });
+    axios.get(`/me/historybet/${user.value?._id}`).then((res) => {
+        historyBets.value = res.docs;
+        console.log(historyBets.value);
     }).catch((err) => {
         console.log(err);
         router.push('/login');
@@ -25,6 +34,11 @@ watch(user, (newVal) => {
     formattedBalanceUser.value = formatCurrency(newVal.balance);
     formattedBetTodayUser.value = formatCurrency(newVal.betToday);
 })
+
+// watch(balanceFluctuations, (newVal) => {
+//     console.log(newVal);
+//     formattedBalanceUser.value = formatCurrency(newVal.amount);
+// })
 </script>
 
 <template>
@@ -32,8 +46,9 @@ watch(user, (newVal) => {
         <div class="info">
             <a-space align="center" style="display: flex; justify-content: space-around;">
                 <HomeOutlined style="color: #fff; font-size: 25px; display: block;" @click="router.push('/')" />
+
                 <a-avatar :size="64" :src="staticUrl + user.avatar" :alt="user.username"></a-avatar>
-                <a-typography.Title style="color: #fff; font-size: 18px;">{{ user.username
+                <a-typography.Title style="color: #fff; font-size: 18px;"> {{ user.username
                     }}</a-typography.Title>
             </a-space>
         </div>
@@ -92,73 +107,41 @@ watch(user, (newVal) => {
 
         <a-divider style="height: 1px; background-color: #ccc; margin: 0 10px"></a-divider>
 
-        <div class="navigation">
-            <a-row gutter="20">
-                <!-- <a-col :span="24">
-                    <a-row style="justify-content: space-around;">
-                        <a-col :span="12" style="display: flex;">
-                            <img :src="iconDeposit" alt="" style="width: 40px; padding-right: 10px;">
-                            <a-typography.Text style="color: #fff; font-size: 20px;">
-                                Lịch sử giao dịch
-                            </a-typography.Text>
-                        </a-col>
-                        <a-col :span="12" style="text-align: right;">
-                            <CaretRightOutlined style="color: #fff; font-size: 23px;" />
-                        </a-col>
-                    </a-row>
-                </a-col> -->
-                <a-col :span="24" style="margin-top: 20px;">
-                    <a-row style="justify-content: space-around;">
-                        <a-col :span="12" style="display: flex;">
-                            <router-link to="/profile/transaction" style="display: flex;">
-                                <img :src="iconDeposit" alt="" style="width: 40px; padding-right: 10px;">
-                                <a-typography.Text style="color: #fff; font-size: 20px;">
-                                    Biến động số dư
-                                </a-typography.Text>
-                            </router-link>
-                        </a-col>
-                        <a-col :span="12" style="text-align: right;">
-                            <CaretRightOutlined style="color: #fff; font-size: 23px; font-weight: bold;" />
-                        </a-col>
-                    </a-row>
-                </a-col>
-                <!-- <a-col :span="24" style="margin-top: 20px;">
-                    <a-row style="justify-content: space-around;">
-                        <a-col :span="12" style="display: flex;">
-                            <img :src="iconDeposit" alt="" style="width: 40px; padding-right: 10px;">
-                            <a-typography.Text style="color: #fff; font-size: 20px;">
-                                Lịch sử rút tiền
-                            </a-typography.Text>
-                        </a-col>
-                        <a-col :span="12" style="text-align: right;">
-                            <CaretRightOutlined style="color: #fff; font-size: 23px; font-weight: bold;" />
-                        </a-col>
-                    </a-row>
-                </a-col> -->
-                <a-col :span="24" style="margin-top: 20px;">
-                    <a-row style="justify-content: space-around;">
-                        <a-col :span="12" style="display: flex;">
-                            <router-link to="/profile/historybet" style="display: flex;">
-                                <img :src="iconDeposit" alt="" style="width: 40px; padding-right: 10px;">
-                                <a-typography.Text style="color: #fff; font-size: 20px;">
-                                    Lịch sử đặt cược
-                                </a-typography.Text>
-                            </router-link>
-                        </a-col>
-                        <a-col :span="12" style="text-align: right;">
-                            <CaretRightOutlined style="color: #fff; font-size: 23px; font-weight: bold;" />
-                        </a-col>
-                    </a-row>
-                </a-col>
-            </a-row>
+        <div class="transaction">
+            <h3 style="color: #ccc;">Biến động số dư</h3>
+
+            <div class="transaction_box" v-for="balance in balanceFluctuations" :key="balance._id">
+                <a-space direction="vertical">
+                    <a-typography.Title v-if="balance.type === 'plus'" level="5" style="color: green; font-size: 23px;">
+                        + {{ formatCurrency(balance.amount) }}
+                    </a-typography.Title>
+                    <a-typography.Title v-else level="5" style="color: red; font-size: 23px;">
+                        - {{ formatCurrency(balance.amount) }}
+                    </a-typography.Title>
+                    <a-typography.Title style="color: #fff; display: block; height: 30px;font-size: 18px;">
+                        {{ balance.reson }}
+                    </a-typography.Title>
+
+                </a-space>
+            </div>
         </div>
 
     </div>
 </template>
 
 <style>
-.navigation {
+.transaction {
     padding: 15px;
+}
+
+.transaction_box {
+    padding: 10px;
+    background-color: #0f1d30;
+    min-height: 100px;
+    margin: 10px;
+    border-radius: 15px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    margin-bottom: 0;
 }
 
 .action_money {

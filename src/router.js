@@ -25,7 +25,17 @@ const router = createRouter({
             component: () => import("./pages/Profile.vue"),
             meta: { requiresAuth: true },
         },
-
+        {
+            path: "/profile/transaction",
+            component: () => import("./pages/Transaction.vue"),
+            meta: { requiresAuth: true },
+        },
+        // profile / historybet
+        {
+            path: "/profile/historybet",
+            component: () => import("./pages/Historybet.vue"),
+            meta: { requiresAuth: true },
+        },
         {
             path: "/game/:code",
             component: () => import("./pages/Game.vue"),

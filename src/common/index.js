@@ -24,6 +24,7 @@ export const removeStorage = (key) => {
 };
 
 export const formatDateTime = (date) => {
+    if (!date) return moment().format("YYYY-MM-DD HH:mm:ss");
     return moment(date).format("YYYY-MM-DD HH:mm:ss");
 };
 
