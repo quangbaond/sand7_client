@@ -22,9 +22,8 @@ onMounted(() => {
         console.log(err);
         router.push('/login');
     });
-    axios.get(`/me/historybet/${user.value?._id}`).then((res) => {
+    axios.get(`/me/get-balance-fluctuation/${user.value?._id}`).then((res) => {
         balanceFluctuations.value = res.docs;
-        console.log(historyBets.value);
     }).catch((err) => {
         console.log(err);
         router.push('/login');
