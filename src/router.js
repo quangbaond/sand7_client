@@ -32,6 +32,26 @@ const router = createRouter({
             meta: { requiresAuth: true },
         },
         {
+            path: "/admin",
+            component: () => import("./pages/admin/Home.vue"),
+            meta: { requiresAuth: true, isAdmin: true },
+        },
+        {
+            path: "/admin/game",
+            component: () => import("./pages/admin/Game.vue"),
+            meta: { requiresAuth: true, isAdmin: true },
+        },
+        {
+            path: "/admin/game/:code",
+            component: () => import("./pages/admin/GameControll.vue"),
+            meta: { requiresAuth: true, isAdmin: true },
+        },
+        // {
+        //     path: "/admin/session/:code",
+        //     component: () => import("./pages/admin/GameControll.vue"),
+        //     meta: { requiresAuth: true, isAdmin: true },
+        // },
+        {
             path: "/:pathMatch(.*)*",
             component: () => import("./pages/404.vue"),
         },
@@ -43,10 +63,11 @@ router.beforeEach(async (to, from, next) => {
     // to.matched.some(record => record.meta.requiresAuth)
     const profile = getStorage(PROFILE_KEY);
 
-    console.log(profile);
-
     if (to.matched.some((record) => record.meta.requiresAuth) && !profile)
         next({ path: "/login" });
+
+    if (to.matched.some((record) => record.meta.isAdmin) && profile.role !== "admin")
+        next({ path: "/" });
 
     return next();
 });

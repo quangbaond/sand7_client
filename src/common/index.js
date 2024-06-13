@@ -1,7 +1,10 @@
 import moment from "moment";
 // save data to location storage by key
 export const setStorage = (key, data) => {
-    window.localStorage.setItem(key, JSON.stringify(data));
+    if (typeof data !== 'string') {
+        data = JSON.stringify(data);
+    }
+    window.localStorage.setItem(key, data);
 };
 
 // get data from location storage by key
@@ -25,6 +28,6 @@ export const formatDateTime = (date) => {
 };
 
 export const formatCurrency = (value) => {
+    if (!value) return 0;
     return value.toLocaleString("en-US", { style: "currency", currency: "USD" });
-
 }

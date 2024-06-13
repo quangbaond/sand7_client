@@ -9,59 +9,82 @@ import iconCoin100k from '@/assets/images/icons/games/coin/100k.png'
 import iconCoin1m from '@/assets/images/icons/games/coin/1m.png'
 import iconCoin50k from '@/assets/images/icons/games/coin/50k.png'
 import iconCoinAll from '@/assets/images/icons/games/coin/all.png'
-
+import { socket } from "@/socket";
+import { layer } from "@layui/layer-vue";
+import axios from '@/common/axios';
+const betDataOnServer = ref(null)
 const user = ref(getStorage('user'))
 const formattedBalanceUser = ref(formatCurrency(user.value.balance))
+const router = useRouter()
+
+const codeInParam = router.currentRoute.value.params.code
+console.log(codeInParam);
+onMounted(() => {
+    axios.get('/me/profile').then((res) => {
+        user.value = res.user;
+    }).catch((err) => {
+        console.log(err);
+        router.push('/login');
+    });
+    socket.on('connected', (data) => {
+        console.log('connected', data);
+    })
+    socket.on(codeInParam, async (dataBet) => {
+        betDataOnServer.value = dataBet
+    })
+
+    socket.on(`win-${user.value._id}-sx5d`, (data) => {
+        changeBalance(data.prize, '+')
+        layer.msg('Chúc mừng bạn đã trúng cược, ' + '+' + formatCurrency(data.prize), {
+            icon: 1,
+            time: 1000,
+        });
+    })
+
+    socket.on(`lose-${user.value._id}-sx5d`, (data) => {
+        layer.msg('Chúc bạn may mắn lần sau', {
+            icon: 2,
+            time: 1000,
+        });
+    })
+})
+
 const amount = ref('')
 const formatNumber = () => {
     amount.value = amount.value.replace(/\D/g, '').replace(/\B(?=(\d{3})+(?!\d))/g, ',')
 }
 
-
-const resultItem = [
-    {
-        id: 1,
-        value: 1
-    },
-    {
-        id: 2,
-        value: 2
-    },
-    {
-        id: 3,
-        value: 3
-    },
-    {
-        id: 4,
-        value: 4
-    },
-    {
-        id: 5,
-        value: 5
-    },
-
-]
+const betData = ref([0, 1, 2, 3, 4])
 const resetBet = () => {
     betInUser.value = []
     amount.value = ''
 }
 
-// const changeBalance = (amount, calculation = '+') => {
-//     if (calculation === '+') {
-//         user.value.balance++
-//         formattedBalanceUser.value = formatCurrency(user.value.balance)
+const changeBalance = (amount, calculation = '+') => {
+    // tạo hiệu ứng thay đổi số dư
+    if (calculation === '+') {
+        user.value.balance += amount
+    } else {
+        user.value.balance -= amount
+    }
+    formattedBalanceUser.value = formatCurrency(user.value.balance)
 
-//         setTimeout(() => {
-//             if (user.value.balance < 1000) {
+}
 
-//             }
-//             user.value.balance++
-//             formattedBalanceUser.value = formatCurrency(user.value.balance)
-//         }, 1000)
+// hiệu ứng hiển thị kết quả khi đang quay quả bóng
+const wheelResult = ref(null)
+const showResult = (on = true) => {
+    if (on) {
+        wheelResult.value = setInterval(() => {
+            betData.value.map((item, index) => {
+                betData.value[index] = Math.floor(Math.random() * 9)
+            })
+        }, 100)
+    } else {
+        clearInterval(wheelResult.value)
+    }
+}
 
-//     }
-
-// }
 const betInUser = ref([])
 // watch amout change
 watch(() => amount.value, (value) => {
@@ -70,6 +93,23 @@ watch(() => amount.value, (value) => {
     } else {
         amount.value = value.replace(/\D/g, '').replace(/\B(?=(\d{3})+(?!\d))/g, '.')
     }
+})
+watch(() => betDataOnServer.value, (value) => {
+    if (value) {
+        if (value.timeRemain === '00:00:00') {
+            showResult(true)
+            setTimeout(() => {
+                showResult(false)
+                betData.value = value.betData
+                betInUser.value = []
+                amount.value = ''
+            }, 6000)
+        }
+    }
+})
+
+watch(() => user.value, (value) => {
+    formattedBalanceUser.value = formatCurrency(value.balance)
 })
 
 
@@ -84,12 +124,51 @@ const onBetItem = (id, value) => {
 const onAmount = (value) => {
     if (value === 'all') {
         amount.value = user.value.balance.toString()
-
     } else {
         amount.value = value.toString()
     }
 }
-const router = useRouter()
+
+const onBet = () => {
+    if (betInUser.value.length === 0) {
+        layer.msg('Vui lòng chọn cược', {
+            icon: 2,
+            time: 1000,
+        });
+        return
+    }
+    if (amount.value === '') {
+        layer.msg('Vui lòng nhập số lượng cược', {
+            icon: 2,
+            time: 1000,
+        });
+        return
+    }
+
+    if (parseInt(amount.value.replace(/\D/g, '')) * betInUser.value.length > user.value.balance) {
+        layer.msg('Số dư không đủ', {
+            icon: 2,
+            time: 1000,
+        });
+        return
+    }
+    const data = {
+        betInUser: betInUser.value,
+        betDataID: betDataOnServer.value._id,
+        amount: parseInt(amount.value.replace(/\D/g, '')) * betInUser.value.length,
+        userID: user.value._id,
+        code: codeInParam,
+        username: user.value.username
+    }
+    socket.emit('onBet', data);
+    layer.msg('Đặt cược thành công', {
+        icon: 1,
+        time: 1000,
+    });
+    changeBalance(amount.value * betInUser.value.length, '-')
+
+}
+
 </script>
 
 <template>
@@ -106,7 +185,7 @@ const router = useRouter()
                 </a-typography-text>
             </a-space>
         </div>
-        <div class="result_wrap">
+        <div class="result_wrap sticky">
             <a-row>
                 <a-col :span="11">
                     <a-typography-text
@@ -117,31 +196,31 @@ const router = useRouter()
                         <a-col :span="6">
                             <a-typography-text class="result_item"
                                 style="color: #fff; font-size: 16px; display: block; text-align: center;">
-                                {{ resultItem[0].value }}
+                                {{ betData[0] }}
                             </a-typography-text>
                         </a-col>
                         <a-col :span="6">
                             <a-typography-text class="result_item"
                                 style="color: #fff; font-size: 16px; display: block; text-align: center;">
-                                {{ resultItem[1].value }}
+                                {{ betData[1] }}
                             </a-typography-text>
                         </a-col>
                         <a-col :span="6">
                             <a-typography-text class="result_item"
                                 style="color: #fff; font-size: 16px; display: block; text-align: center;">
-                                {{ resultItem[2].value }}
+                                {{ betData[2] }}
                             </a-typography-text>
                         </a-col>
                         <a-col :span="6">
                             <a-typography-text class="result_item"
                                 style="color: #fff; font-size: 16px; display: block; text-align: center;">
-                                {{ resultItem[3].value }}
+                                {{ betData[3] }}
                             </a-typography-text>
                         </a-col>
                         <a-col :span="6">
                             <a-typography-text class="result_item"
                                 style="color: #fff; font-size: 16px; display: block; text-align: center;">
-                                {{ resultItem[4].value }}
+                                {{ betData[4] }}
                             </a-typography-text>
                         </a-col>
                     </a-row>
@@ -153,30 +232,94 @@ const router = useRouter()
                     </a-typography-text>
                     <a-typography-text
                         style="color: #ccc; font-size: 16px; display: block; font-weight: 600; text-align: center;">
-                        1234561212
+                        {{ betDataOnServer ? betDataOnServer.id : '' }}
                     </a-typography-text>
                     <a-typography-text
                         style="color: #0d8ea7; font-size: 18px; display: block; font-weight: 600; text-align: center;">
-                        <span id="hours">00:</span>
-                        <span id="minutes">00:</span>
-                        <span id="seconds">00</span>
+                        <span>{{ betDataOnServer && betDataOnServer?.timeRemain !== '00:00:00' ?
+                            betDataOnServer.timeRemain : 'Ngừng cược' }}</span>
                     </a-typography-text>
                 </a-col>
                 <a-col :span="2">
                     <ReloadOutlined style="color: #fff; font-size: 20px; font-weight: 900;" />
                 </a-col>
             </a-row>
+            <div
+                style="text-align: center; width: 25px; margin: auto; background-color: #0f1d30; height: 25px; display: flex; justify-content: center;">
+                <ArrowDownOutlined style="color: #fff; font-size: 15px; font-weight: 900; align-self: center;" />
+            </div>
         </div>
-        <div
-            style="text-align: center; width: 25px; margin: auto; background-color: #0f1d30; height: 25px; display: flex; justify-content: center;">
-            <ArrowDownOutlined style="color: #fff; font-size: 15px; font-weight: 900; align-self: center;" />
-        </div>
+
 
         <div class="bet_wrap">
             <div class="bet">
                 <a-typography-text
                     style="color: #fff; font-size: 16px; display: block; font-weight: 600; text-align: center; margin-bottom: 10px;">
                     Quả bóng đầu tiên
+                </a-typography-text>
+                <a-row :gutter="10">
+                    <a-col :span="6">
+                        <a-card
+                            :class="{ 'onBet': betInUser.findIndex(item => item.id === 0 && item.value === 1) > -1 }"
+                            @click="onBetItem(0, 1)">
+                            <a-typography-text
+                                style="color: #fff; font-size: 16px; display: block; text-align: center;">
+                                Lớn
+                            </a-typography-text>
+                            <a-typography-text
+                                style="color: #ccc; font-size: 14px; display: block; text-align: center;">
+                                1.98
+                            </a-typography-text>
+                        </a-card>
+                    </a-col>
+                    <a-col :span="6">
+                        <a-card
+                            :class="{ 'onBet': betInUser.findIndex(item => item.id === 0 && item.value === 2) > -1 }"
+                            @click="onBetItem(0, 2)">
+                            <a-typography-text
+                                style="color: #fff; font-size: 16px; display: block; text-align: center;">
+                                Nhỏ
+                            </a-typography-text>
+                            <a-typography-text
+                                style="color: #ccc; font-size: 14px; display: block; text-align: center;">
+                                1.98
+                            </a-typography-text>
+                        </a-card>
+                    </a-col>
+                    <a-col :span="6">
+                        <a-card
+                            :class="{ 'onBet': betInUser.findIndex(item => item.id === 0 && item.value === 3) > -1 }"
+                            @click="onBetItem(0, 3)">
+                            <a-typography-text
+                                style="color: #fff; font-size: 16px; display: block; text-align: center;">
+                                Đơn
+                            </a-typography-text>
+                            <a-typography-text
+                                style="color: #ccc; font-size: 14px; display: block; text-align: center;">
+                                1.98
+                            </a-typography-text>
+                        </a-card>
+                    </a-col>
+                    <a-col :span="6">
+                        <a-card
+                            :class="{ 'onBet': betInUser.findIndex(item => item.id === 0 && item.value === 4) > -1 }"
+                            @click="onBetItem(0, 4)">
+                            <a-typography-text
+                                style="color: #fff; font-size: 16px; display: block; text-align: center;">
+                                Đôi
+                            </a-typography-text>
+                            <a-typography-text
+                                style="color: #ccc; font-size: 14px; display: block; text-align: center;">
+                                1.98
+                            </a-typography-text>
+                        </a-card>
+                    </a-col>
+                </a-row>
+            </div>
+            <div class="bet">
+                <a-typography-text
+                    style="color: #fff; font-size: 16px; display: block; font-weight: 600; text-align: center; margin-bottom: 10px;">
+                    Quả bóng thứ 2
                 </a-typography-text>
                 <a-row :gutter="10">
                     <a-col :span="6">
@@ -240,7 +383,7 @@ const router = useRouter()
             <div class="bet">
                 <a-typography-text
                     style="color: #fff; font-size: 16px; display: block; font-weight: 600; text-align: center; margin-bottom: 10px;">
-                    Quả bóng thứ 2
+                    Quả bóng thứ 3
                 </a-typography-text>
                 <a-row :gutter="10">
                     <a-col :span="6">
@@ -304,7 +447,7 @@ const router = useRouter()
             <div class="bet">
                 <a-typography-text
                     style="color: #fff; font-size: 16px; display: block; font-weight: 600; text-align: center; margin-bottom: 10px;">
-                    Quả bóng thứ 3
+                    Quả bóng thứ 4
                 </a-typography-text>
                 <a-row :gutter="10">
                     <a-col :span="6">
@@ -368,7 +511,7 @@ const router = useRouter()
             <div class="bet">
                 <a-typography-text
                     style="color: #fff; font-size: 16px; display: block; font-weight: 600; text-align: center; margin-bottom: 10px;">
-                    Quả bóng thứ 4
+                    Quả bóng thứ 5
                 </a-typography-text>
                 <a-row :gutter="10">
                     <a-col :span="6">
@@ -432,7 +575,7 @@ const router = useRouter()
             <div class="bet">
                 <a-typography-text
                     style="color: #fff; font-size: 16px; display: block; font-weight: 600; text-align: center; margin-bottom: 10px;">
-                    Quả bóng thứ 5
+                    Tổng
                 </a-typography-text>
                 <a-row :gutter="10">
                     <a-col :span="6">
@@ -493,80 +636,15 @@ const router = useRouter()
                     </a-col>
                 </a-row>
             </div>
-            <div class="bet">
-                <a-typography-text
-                    style="color: #fff; font-size: 16px; display: block; font-weight: 600; text-align: center; margin-bottom: 10px;">
-                    Tổng
-                </a-typography-text>
-                <a-row :gutter="10">
-                    <a-col :span="6">
-                        <a-card
-                            :class="{ 'onBet': betInUser.findIndex(item => item.id === 6 && item.value === 1) > -1 }"
-                            @click="onBetItem(6, 1)">
-                            <a-typography-text
-                                style="color: #fff; font-size: 16px; display: block; text-align: center;">
-                                Lớn
-                            </a-typography-text>
-                            <a-typography-text
-                                style="color: #ccc; font-size: 14px; display: block; text-align: center;">
-                                1.98
-                            </a-typography-text>
-                        </a-card>
-                    </a-col>
-                    <a-col :span="6">
-                        <a-card
-                            :class="{ 'onBet': betInUser.findIndex(item => item.id === 6 && item.value === 2) > -1 }"
-                            @click="onBetItem(6, 2)">
-                            <a-typography-text
-                                style="color: #fff; font-size: 16px; display: block; text-align: center;">
-                                Nhỏ
-                            </a-typography-text>
-                            <a-typography-text
-                                style="color: #ccc; font-size: 14px; display: block; text-align: center;">
-                                1.98
-                            </a-typography-text>
-                        </a-card>
-                    </a-col>
-                    <a-col :span="6">
-                        <a-card
-                            :class="{ 'onBet': betInUser.findIndex(item => item.id === 6 && item.value === 3) > -1 }"
-                            @click="onBetItem(6, 3)">
-                            <a-typography-text
-                                style="color: #fff; font-size: 16px; display: block; text-align: center;">
-                                Đơn
-                            </a-typography-text>
-                            <a-typography-text
-                                style="color: #ccc; font-size: 14px; display: block; text-align: center;">
-                                1.98
-                            </a-typography-text>
-                        </a-card>
-                    </a-col>
-                    <a-col :span="6">
-                        <a-card
-                            :class="{ 'onBet': betInUser.findIndex(item => item.id === 6 && item.value === 4) > -1 }"
-                            @click="onBetItem(6, 4)">
-                            <a-typography-text
-                                style="color: #fff; font-size: 16px; display: block; text-align: center;">
-                                Đôi
-                            </a-typography-text>
-                            <a-typography-text
-                                style="color: #ccc; font-size: 14px; display: block; text-align: center;">
-                                1.98
-                            </a-typography-text>
-                        </a-card>
-                    </a-col>
-                </a-row>
-            </div>
         </div>
 
         <div class="onbet">
             <a-row gutter="10" style="justify-content: space-around;">
                 <a-col :span="12" style=" display: flex;">
-                    <div style="align-self: center;">
-                        <a-input v-model:value="amount" placeholder="Nhập số lượng" @change="formatNumber" />
-                    </div>
+                    <a-input v-model:value="amount" placeholder="Nhập số lượng" @change="formatNumber"
+                        style="width: 100%;" />
                 </a-col>
-                <a-col :span="12" style=" display: flex;">
+                <a-col :span="12" style=" display: flex; justify-content: space-around;">
                     <div style="display: flex;">
                         <div class="coin_item" style="position: relative;">
                             <img :src="iconCoin10k" alt="" style="max-width: 30px">
@@ -594,10 +672,10 @@ const router = useRouter()
                 <a-col :span="12" style="margin-top: 10px;">
                     <a-row gutter="10">
                         <a-col :span="12">
-                            <a-button @click="resetBet">Xóa</a-button>
+                            <a-button @click="resetBet" style="width: 100%">Xóa</a-button>
                         </a-col>
                         <a-col :span="12">
-                            <a-button type="primary" @click="onBet">Đặt cược</a-button>
+                            <a-button type="primary" @click="onBet" style="width: 100%">Đặt cược</a-button>
                         </a-col>
                     </a-row>
                 </a-col>
@@ -614,6 +692,10 @@ const router = useRouter()
 
 .bet_wrap {
     margin: 20px 0;
+}
+
+.coin_item {
+    cursor: pointer;
 }
 
 .result_item {
@@ -648,6 +730,14 @@ const router = useRouter()
     border-radius: 15px;
     box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
     margin-bottom: 0;
+}
+
+.sticky {
+    position: -webkit-sticky
+        /* Safari */
+    ;
+    position: sticky !important;
+    top: 0;
 }
 
 .ant-card {

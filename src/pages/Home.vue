@@ -8,7 +8,6 @@ import slider4 from '@/assets/images/slider/4.jpg'
 import iconDeposit from '@/assets/images/icons/deposit.png'
 import iconWithdraw from '@/assets/images/icons/withdraw.png'
 import iconAccount from '@/assets/images/icons/account.png'
-import bgGame from '@/assets/images/icons/games/bg.png'
 
 import sliderFooter from '@/assets/images/slider/5.png'
 import iconHome from '@/assets/images/icons/home.png'
@@ -16,8 +15,10 @@ import iconLottery from '@/assets/images/icons/lottery.svg'
 import iconHistoryBet from '@/assets/images/icons/historyBet.png'
 import iconCSKH from '@/assets/images/icons/cskh.svg'
 import iconProfile from '@/assets/images/icons/profile.png'
-import { inject, ref } from 'vue'
+import { ref, onMounted, watch } from 'vue'
 import { useRouter } from 'vue-router'
+import axios from '@/common/axios'
+import { layer } from "@layui/layer-vue"
 
 import { getStorage, formatCurrency } from '@/common'
 import { listGame } from '../common/constants'
@@ -49,8 +50,23 @@ const slider = [
     },
 ];
 
-const user = getStorage('user');
-let formattedBalanceUser = formatCurrency(user.balance);
+const user = ref(getStorage('user'));
+const formattedBalanceUser = ref(formatCurrency(user.balance));
+
+onMounted(() => {
+    console.log(user.value);
+    axios.get('/me/profile').then((res) => {
+        user.value = res.user;
+    }).catch((err) => {
+        console.log(err);
+        router.push('/login');
+    });
+});
+watch(user, (newVal) => {
+    console.log(newVal);
+    formattedBalanceUser.value = formatCurrency(newVal.balance);
+});
+
 const router = useRouter();
 
 </script>
@@ -100,6 +116,9 @@ const router = useRouter();
                             <a-typography-text style="display: block; text-align: center; font-size: 10px;">
                                 Tài khoản
                             </a-typography-text>
+                        </a-space>
+                        <a-space align="center" direction="vertical">
+                            <router-link to="/admin" v-if="user.role === 'admin'">Admin</router-link>
                         </a-space>
 
                     </a-space>

@@ -12,43 +12,43 @@ import iconGame8 from '@/assets/images/icons/games/8.png'
 export const listGame = [
     {
         name: "Xem xổ số 5 điểm",
-        code: "xoso-5-diem",
+        code: "sx5d",
         type: "Venice",
         image: iconGame1
     },
     {
         name: "Xố số 2",
-        code: "xo-so-2",
+        code: "xs2",
         type: "Tencent",
         image: iconGame2
     },
     {
         name: "Vé số",
-        code: "ve-so",
+        code: "veso",
         type: "Tencent",
         image: iconGame3
     },
     {
         name: "Phi thuyền",
-        code: "may-man",
+        code: "mayman",
         type: "May mắn",
         image: iconGame4
     },
     {
         name: "Nhanh 3",
-        code: "nhanh-3",
+        code: "nhanh3",
         type: "Venice",
         image: iconGame5
     },
     {
         name: "PK đón",
-        code: "pk-don",
+        code: "pkdon",
         type: "Tốc độ cao",
         image: iconGame6
     },
     {
         name: "Vé số",
-        code: "ve-so",
+        code: "veso1",
         type: "Venice",
         image: iconGame7
     },

@@ -3,6 +3,13 @@ body {
   margin: 0;
   padding: 0;
 }
+#app {
+  margin: 0;
+  max-width: 576px;
+  margin-left: auto;
+  margin-right: auto;
+  overflow-x: hidden;
+}
 
 :-ms-input-placeholder {
   color: #6e6e6e;

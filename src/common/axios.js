@@ -1,12 +1,16 @@
 import axios from "axios";
-
+import { layer } from "@layui/layer-vue";
+import { useRouter } from 'vue-router'
 const instance = axios.create({
     baseURL: import.meta.env.VITE_API_URL || "http://localhost:3000",
 });
+const router = useRouter();
+
 
 instance.interceptors.request.use(
     (config) => {
-        const token = localStorage.getItem("token");
+        let token = localStorage.getItem("token");
+        token = token.replace(/"/g, "");
         if (token) {
             config.headers.Authorization = `Bearer ${token}`;
         }
@@ -23,8 +27,7 @@ instance.interceptors.response.use(
     },
     (error) => {
         if (error.response.status === 401) {
-            localStorage.removeItem("token");
-            window.location.href = "/login";
+            layer.msg("Đăng nhập hết hạn", { icon: 2 });
         }
         return Promise.reject(error);
     }

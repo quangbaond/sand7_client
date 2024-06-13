@@ -3,6 +3,8 @@ import { getStorage } from '@/common'
 import { onMounted } from 'vue'
 import { formatCurrency } from '../common';
 import iconDeposit from '@/assets/images/icons/profile/deposit.svg'
+import { CaretRightOutlined } from '@ant-design/icons-vue';
+
 const user = getStorage('user')
 const staticUrl = import.meta.env.VITE_APP_STATIC_URL ?? 'http://localhost:3000'
 const formattedBalanceUser = formatCurrency(user.balance)
@@ -76,10 +78,58 @@ onMounted(() => {
 
         <a-divider style="height: 1px; background-color: #e5eee5; margin: 0 10px"></a-divider>
 
+        <div class="navigation">
+            <a-row gutter="20">
+                <a-col :span="24">
+                    <a-row style="justify-content: space-around;">
+                        <a-col :span="12" style="display: flex;">
+                            <img :src="iconDeposit" alt="" style="width: 40px; padding-right: 10px;">
+                            <a-typography.Text style="color: #fff; font-size: 20px;">
+                                Lịch sử giao dịch
+                            </a-typography.Text>
+                        </a-col>
+                        <a-col :span="12" style="text-align: right;">
+                            <CaretRightOutlined style="color: #fff; font-size: 23px;" />
+                        </a-col>
+                    </a-row>
+                </a-col>
+                <a-col :span="24" style="margin-top: 20px;">
+                    <a-row style="justify-content: space-around;">
+                        <a-col :span="12" style="display: flex;">
+                            <img :src="iconDeposit" alt="" style="width: 40px; padding-right: 10px;">
+                            <a-typography.Text style="color: #fff; font-size: 20px;">
+                                Lịch sử nạp tiền
+                            </a-typography.Text>
+                        </a-col>
+                        <a-col :span="12" style="text-align: right;">
+                            <CaretRightOutlined style="color: #fff; font-size: 23px; font-weight: bold;" />
+                        </a-col>
+                    </a-row>
+                </a-col>
+                <a-col :span="24" style="margin-top: 20px;">
+                    <a-row style="justify-content: space-around;">
+                        <a-col :span="12" style="display: flex;">
+                            <img :src="iconDeposit" alt="" style="width: 40px; padding-right: 10px;">
+                            <a-typography.Text style="color: #fff; font-size: 20px;">
+                                Lịch sử rút tiền
+                            </a-typography.Text>
+                        </a-col>
+                        <a-col :span="12" style="text-align: right;">
+                            <CaretRightOutlined style="color: #fff; font-size: 23px; font-weight: bold;" />
+                        </a-col>
+                    </a-row>
+                </a-col>
+            </a-row>
+        </div>
+
     </div>
 </template>
 
 <style>
+.navigation {
+    padding: 15px;
+}
+
 .action_money {
     padding: 10px;
     background-color: #0f1d30;
