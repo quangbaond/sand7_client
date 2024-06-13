@@ -10,8 +10,8 @@ const router = useRouter();
 instance.interceptors.request.use(
     (config) => {
         let token = localStorage.getItem("token");
-        token = token.replace(/"/g, "");
         if (token) {
+            token = token.replace(/"/g, "");
             config.headers.Authorization = `Bearer ${token}`;
         }
         return config;
