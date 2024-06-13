@@ -12,7 +12,7 @@ const user = ref(getStorage('user'))
 const staticUrl = import.meta.env.VITE_APP_STATIC_URL ?? 'http://localhost:3000'
 const formattedBalanceUser = ref(formatCurrency(user.balance))
 const formattedBetTodayUser = ref(formatCurrency(user.betToday))
-const historyBets = ref([]);
+const balanceFluctuations = ref([]);
 const router = useRouter();
 onMounted(() => {
     // console.log(user)
@@ -23,7 +23,7 @@ onMounted(() => {
         router.push('/login');
     });
     axios.get(`/me/historybet/${user.value?._id}`).then((res) => {
-        historyBets.value = res.docs;
+        balanceFluctuations.value = res.docs;
         console.log(historyBets.value);
     }).catch((err) => {
         console.log(err);
