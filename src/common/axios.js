@@ -26,7 +26,7 @@ instance.interceptors.response.use(
         return response.data;
     },
     (error) => {
-        if (error.response.status === 401) {
+        if (error.response?.status === 401) {
             layer.msg("Đăng nhập hết hạn", { icon: 2 });
         }
         return Promise.reject(error);
