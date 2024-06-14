@@ -17,6 +17,9 @@ const selectedKeys = ref(['2']);
             <a-menu-item key="3">
                 <router-link to="/admin/profile">Profile</router-link>
             </a-menu-item>
+            <a-menu-item key="4">
+                <router-link to="/admin/setting">Cài đặt</router-link>
+            </a-menu-item>
         </a-menu>
     </a-layout-header>
 </template>

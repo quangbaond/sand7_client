@@ -56,6 +56,11 @@ const router = createRouter({
             component: () => import("./pages/admin/GameControll.vue"),
             meta: { requiresAuth: true, isAdmin: true },
         },
+        {
+            path: "/admin/setting",
+            component: () => import("./pages/admin/SettingPage.vue"),
+            meta: { requiresAuth: true, isAdmin: true },
+        },
         // {
         //     path: "/admin/session/:code",
         //     component: () => import("./pages/admin/GameControll.vue"),
