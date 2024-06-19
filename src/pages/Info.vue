@@ -1,33 +1,100 @@
 <script setup>
 import { getStorage } from '@/common'
 import { onMounted, watch } from 'vue'
-import { formatCurrency } from '../common';
+import { formatCurrency, formatDateTime } from '../common';
 import iconDeposit from '@/assets/images/icons/profile/deposit.svg'
 import { CaretRightOutlined, HomeOutlined } from '@ant-design/icons-vue';
 import { ref } from 'vue';
 import axios from '@/common/axios.js';
 import { useRouter } from 'vue-router';
+import { cloneDeep } from 'lodash-es';
 
 const user = ref(getStorage('user'))
 const staticUrl = import.meta.env.VITE_APP_STATIC_URL ?? 'http://localhost:3000'
 const formattedBalanceUser = ref(formatCurrency(user.balance))
 const formattedBetTodayUser = ref(formatCurrency(user.betToday))
-const balanceFluctuations = ref([]);
-// get type in router
 const router = useRouter();
-const type = router.currentRoute.value.query.type;
-console.log(type);
+const dataSource = ref([]);
+const columns = [
+    {
+        title: 'Phiên',
+        dataIndex: 'sessionId',
+        key: 'sessionId',
+    },
+    {
+        title: 'Số đặt cược',
+        dataIndex: 'betInUserText',
+        key: 'betInUserText',
+    },
+    {
+        title: 'Số tiền cược',
+        dataIndex: 'amount',
+        key: 'betDataText',
+    },
+    //resultSession
+    {
+        title: 'Kết quả',
+        dataIndex: 'resultSession',
+        key: 'resultSession',
+    },
+    {
+        title: 'Thời gian',
+        dataIndex: 'createdAt',
+        key: 'createdAt',
+        customRender: (text) => {
+            return formatDateTime(text)
+        }
+    },
+
+]
+const pagination = ref(
+    {
+        pageSize: 10,
+        showSizeChanger: false,
+        showQuickJumper: false,
+        showTotal: (total) => `Total ${total} items`,
+    }
+)
+
+const updateData = (data) => {
+    const valueToMessage = {
+        1: "Lớn",
+        2: "Nhỏ",
+        3: "Lẻ",
+        4: "Chẵn"
+    };
+
+    return data.map((item) => {
+        const idToMessage = ["số đầu tiên", "số thứ hai", "số thứ ba", "số thứ tư", "số thứ năm"];
+
+        // Tạo message cho từng betInUser
+        const messages = item.betInUser.map((bet, index) => {
+            const idMessage = idToMessage[index] || `số thứ ${index + 1}`;
+            const valueMessage = valueToMessage[bet.value] || `value ${bet.value}`;
+            return `${idMessage}: ${valueMessage}`;
+        });
+
+        // Ghép các message lại với nhau
+        const finalMessage = messages.join(" - ");
+
+        // Trả về đối tượng mới với các trường đã cập nhật
+        return {
+            ...item,
+            sessionId: item.betData?.id,
+            resultSession: item.betData.betData.join(','),
+            betInUserText: finalMessage,
+            createAt: formatDateTime(item.createdAt),
+            amount: formatCurrency(item.amount)
+
+        };
+    });
+};
+
 
 onMounted(() => {
     // console.log(user)
-    axios.get(`/me/profile`).then((res) => {
+    axios.get('/me/profile').then((res) => {
         user.value = res.user;
-    }).catch((err) => {
-        console.log(err);
-        router.push('/login');
-    });
-    axios.get(`/me/get-balance-fluctuation/${user.value?._id}?type=${type}`).then((res) => {
-        balanceFluctuations.value = res.docs;
     }).catch((err) => {
         console.log(err);
         router.push('/login');
@@ -37,11 +104,6 @@ watch(user, (newVal) => {
     formattedBalanceUser.value = formatCurrency(newVal.balance);
     formattedBetTodayUser.value = formatCurrency(newVal.betToday);
 })
-
-// watch(balanceFluctuations, (newVal) => {
-//     console.log(newVal);
-//     formattedBalanceUser.value = formatCurrency(newVal.amount);
-// })
 </script>
 
 <template>
@@ -49,9 +111,8 @@ watch(user, (newVal) => {
         <div class="info">
             <a-space align="center" style="display: flex; justify-content: space-around;">
                 <HomeOutlined style="color: #fff; font-size: 25px; display: block;" @click="router.push('/')" />
-
                 <a-avatar :size="64" :src="staticUrl + user.avatar" :alt="user.username"></a-avatar>
-                <a-typography.Title style="color: #fff; font-size: 18px;"> {{ user.username
+                <a-typography.Title style="color: #fff; font-size: 18px;">{{ user.username
                     }}</a-typography.Title>
             </a-space>
         </div>
@@ -68,26 +129,6 @@ watch(user, (newVal) => {
                         </a-typography.Title>
                     </a-space>
                 </a-col>
-                <!-- <a-col :span="8">
-                    <a-space direction="vertical">
-                        <a-typography.Title level="5" style="color: #5d636e; display: block; height: 30px;">
-                            Đặt cược hôm nay
-                        </a-typography.Title>
-                        <a-typography.Title level="5" style="color: #fff; font-size: 20px;">
-                            {{ formattedBalanceUser }}
-                        </a-typography.Title>
-                    </a-space>
-                </a-col>
-                <a-col :span="8">
-                    <a-space direction="vertical">
-                        <a-typography.Title level="5" style="color: #5d636e; display: block; height: 30px;">
-                            Lãi và lỗ hôm nay
-                        </a-typography.Title>
-                        <a-typography.Title level="5" style="color: #fff; font-size: 20px;">
-                            {{ formattedBalanceUser }}
-                        </a-typography.Title>
-                    </a-space>
-                </a-col> -->
             </a-row>
         </div>
 
@@ -99,7 +140,7 @@ watch(user, (newVal) => {
                         <span>Nạp tiền</span>
                     </a-space>
                 </a-button>
-                <a-button class="width_draw">
+                <a-button class="width_draw" @click="router.push('/desposit')">
                     <a-space>
                         <img :src="iconDeposit" alt=""></img>
                         <span>Rút tiền</span>
@@ -110,41 +151,16 @@ watch(user, (newVal) => {
 
         <a-divider style="height: 1px; background-color: #ccc; margin: 0 10px"></a-divider>
 
-        <div class="transaction">
-            <h3 style="color: #ccc;">Biến động số dư</h3>
-
-            <div class="transaction_box" v-for="balance in balanceFluctuations" :key="balance._id">
-                <a-space direction="vertical">
-                    <a-typography.Title v-if="balance.type === 'plus'" level="5" style="color: green; font-size: 23px;">
-                        + {{ formatCurrency(balance.amount) }}
-                    </a-typography.Title>
-                    <a-typography.Title v-else level="5" style="color: red; font-size: 23px;">
-                        - {{ formatCurrency(balance.amount) }}
-                    </a-typography.Title>
-                    <a-typography.Title style="color: #fff; display: block; height: 30px;font-size: 18px;">
-                        {{ balance.reson }}
-                    </a-typography.Title>
-
-                </a-space>
-            </div>
+        <div class="navigation">
+            <h3 style="color: #ccc;">Thông tin cá nhân</h3>
         </div>
 
     </div>
 </template>
 
 <style>
-.transaction {
+.navigation {
     padding: 15px;
-}
-
-.transaction_box {
-    padding: 10px;
-    background-color: #0f1d30;
-    min-height: 100px;
-    margin: 10px;
-    border-radius: 15px;
-    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-    margin-bottom: 0;
 }
 
 .action_money {
@@ -179,5 +195,36 @@ watch(user, (newVal) => {
 .info {
     padding-top: 20px;
     padding-left: 20px;
+}
+
+.ant-table {
+    background-color: #0f1d30 !important;
+    color: #fff !important;
+}
+
+.ant-table-row:hover .ant-table-cell {
+    background-color: #0f1d30 !important;
+}
+
+.ant-table-cell {
+    color: #fff !important;
+    background-color: #0C192C !important;
+}
+
+.ant-pagination-total-text {
+    color: #fff !important;
+}
+
+.ant-pagination-item-link {
+    color: #fff !important;
+}
+
+.ant-pagination-item {
+    background-color: #fff !important;
+    color: #0C192C;
+}
+
+.ant-pagination-options-quick-jumper {
+    color: #fff !important;
 }
 </style>

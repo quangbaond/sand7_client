@@ -47,6 +47,14 @@ const columns = [
     },
 
 ]
+const pagination = ref(
+    {
+        pageSize: 10,
+        showSizeChanger: false,
+        showQuickJumper: false,
+        showTotal: (total) => `Total ${total} items`,
+    }
+)
 
 const updateData = (data) => {
     const valueToMessage = {
@@ -82,6 +90,7 @@ const updateData = (data) => {
     });
 };
 
+
 onMounted(() => {
     // console.log(user)
     axios.get('/me/profile').then((res) => {
@@ -93,10 +102,46 @@ onMounted(() => {
     axios.get(`/me/historybet/${user.value?._id}`).then((res) => {
         const data = updateData(res.docs);
         dataSource.value = cloneDeep(data);
+        console.log(res);
+        pagination.value = {
+            ...pagination.value,
+            total: res.totalDocs + 1,
+            pageSize: res.limit,
+            current: res.page,
+            showSizeChanger: true,
+            showQuickJumper: true,
+            showTotal: total => `Tổng kết qủa ${res.totalDocs} kết quả`,
+        }
     }).catch((err) => {
         console.log(err);
     });
 })
+const run = async (params = {}) => {
+    const data = {
+        ...params,
+    }
+    const res = await axios.get(`/me/historybet/${user.value?._id}`, { params: data });
+    const dataUpdate = updateData(res.docs);
+    dataSource.value = cloneDeep(dataUpdate);
+    pagination.value = {
+        ...pagination.value,
+        total: res.totalDocs + 1,
+        pageSize: res.limit,
+        current: res.page,
+        showSizeChanger: true,
+        showQuickJumper: true,
+        showTotal: total => `Tổng kết qủa ${res.totalDocs} kết quả`,
+    }
+}
+const handleTableChange = (pag, filters, sorter) => {
+    run({
+        results: pag.pageSize,
+        page: pag?.current,
+        sortField: sorter.field,
+        sortOrder: sorter.order,
+        ...filters,
+    });
+};
 watch(user, (newVal) => {
     formattedBalanceUser.value = formatCurrency(newVal.balance);
     formattedBetTodayUser.value = formatCurrency(newVal.betToday);
@@ -137,7 +182,7 @@ watch(user, (newVal) => {
                         <span>Nạp tiền</span>
                     </a-space>
                 </a-button>
-                <a-button class="width_draw">
+                <a-button class="width_draw" @click="router.push('/desposit')">
                     <a-space>
                         <img :src="iconDeposit" alt=""></img>
                         <span>Rút tiền</span>
@@ -150,7 +195,8 @@ watch(user, (newVal) => {
 
         <div class="navigation">
             <h3 style="color: #ccc;">Lịch sử đặt cược</h3>
-            <a-table :columns="columns" :dataSource="dataSource" bordered :hover="false" resizeColumn></a-table>
+            <a-table :columns="columns" @change="handleTableChange" :dataSource="dataSource" bordered :hover="false"
+                resizeColumn :pagination="pagination"></a-table>
         </div>
 
     </div>
@@ -202,5 +248,27 @@ watch(user, (newVal) => {
 
 .ant-table-row:hover .ant-table-cell {
     background-color: #0f1d30 !important;
+}
+
+.ant-table-cell {
+    color: #fff !important;
+    background-color: #0C192C !important;
+}
+
+.ant-pagination-total-text {
+    color: #fff !important;
+}
+
+.ant-pagination-item-link {
+    color: #fff !important;
+}
+
+.ant-pagination-item {
+    background-color: #fff !important;
+    color: #0C192C;
+}
+
+.ant-pagination-options-quick-jumper {
+    color: #fff !important;
 }
 </style>

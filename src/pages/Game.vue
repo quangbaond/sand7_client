@@ -274,7 +274,7 @@ const onBet = () => {
                             </a-typography-text>
                             <a-typography-text
                                 style="color: #ccc; font-size: 14px; display: block; text-align: center;">
-                                {{ setting.value }}
+                                {{ codeInParam === 'sx5d' ? setting.value : '1.98' }}
                             </a-typography-text>
                         </a-card>
                     </a-col>
@@ -288,7 +288,7 @@ const onBet = () => {
                             </a-typography-text>
                             <a-typography-text
                                 style="color: #ccc; font-size: 14px; display: block; text-align: center;">
-                                {{ setting.value }}
+                                {{ codeInParam === 'sx5d' ? setting.value : '1.98' }}
                             </a-typography-text>
                         </a-card>
                     </a-col>
@@ -302,7 +302,7 @@ const onBet = () => {
                             </a-typography-text>
                             <a-typography-text
                                 style="color: #ccc; font-size: 14px; display: block; text-align: center;">
-                                {{ setting.value }}
+                                1.98
                             </a-typography-text>
                         </a-card>
                     </a-col>
@@ -316,7 +316,7 @@ const onBet = () => {
                             </a-typography-text>
                             <a-typography-text
                                 style="color: #ccc; font-size: 14px; display: block; text-align: center;">
-                                {{ setting.value }}
+                                1.98
                             </a-typography-text>
                         </a-card>
                     </a-col>
@@ -338,7 +338,7 @@ const onBet = () => {
                             </a-typography-text>
                             <a-typography-text
                                 style="color: #ccc; font-size: 14px; display: block; text-align: center;">
-                                {{ setting.value }}
+                                1.98
                             </a-typography-text>
                         </a-card>
                     </a-col>
@@ -352,7 +352,7 @@ const onBet = () => {
                             </a-typography-text>
                             <a-typography-text
                                 style="color: #ccc; font-size: 14px; display: block; text-align: center;">
-                                {{ setting.value }}
+                                1.98
                             </a-typography-text>
                         </a-card>
                     </a-col>
@@ -366,7 +366,7 @@ const onBet = () => {
                             </a-typography-text>
                             <a-typography-text
                                 style="color: #ccc; font-size: 14px; display: block; text-align: center;">
-                                {{ setting.value }}
+                                1.98
                             </a-typography-text>
                         </a-card>
                     </a-col>
@@ -380,7 +380,7 @@ const onBet = () => {
                             </a-typography-text>
                             <a-typography-text
                                 style="color: #ccc; font-size: 14px; display: block; text-align: center;">
-                                {{ setting.value }}
+                                1.98
                             </a-typography-text>
                         </a-card>
                     </a-col>
@@ -402,7 +402,7 @@ const onBet = () => {
                             </a-typography-text>
                             <a-typography-text
                                 style="color: #ccc; font-size: 14px; display: block; text-align: center;">
-                                {{ setting.value }}
+                                1.98
                             </a-typography-text>
                         </a-card>
                     </a-col>
@@ -416,7 +416,7 @@ const onBet = () => {
                             </a-typography-text>
                             <a-typography-text
                                 style="color: #ccc; font-size: 14px; display: block; text-align: center;">
-                                {{ setting.value }}
+                                1.98
                             </a-typography-text>
                         </a-card>
                     </a-col>
@@ -430,7 +430,7 @@ const onBet = () => {
                             </a-typography-text>
                             <a-typography-text
                                 style="color: #ccc; font-size: 14px; display: block; text-align: center;">
-                                {{ setting.value }}
+                                1.98
                             </a-typography-text>
                         </a-card>
                     </a-col>
@@ -444,7 +444,7 @@ const onBet = () => {
                             </a-typography-text>
                             <a-typography-text
                                 style="color: #ccc; font-size: 14px; display: block; text-align: center;">
-                                {{ setting.value }}
+                                1.98
                             </a-typography-text>
                         </a-card>
                     </a-col>
@@ -466,7 +466,7 @@ const onBet = () => {
                             </a-typography-text>
                             <a-typography-text
                                 style="color: #ccc; font-size: 14px; display: block; text-align: center;">
-                                {{ setting.value }}
+                                1.98
                             </a-typography-text>
                         </a-card>
                     </a-col>
@@ -480,7 +480,7 @@ const onBet = () => {
                             </a-typography-text>
                             <a-typography-text
                                 style="color: #ccc; font-size: 14px; display: block; text-align: center;">
-                                {{ setting.value }}
+                                1.98
                             </a-typography-text>
                         </a-card>
                     </a-col>
@@ -494,7 +494,7 @@ const onBet = () => {
                             </a-typography-text>
                             <a-typography-text
                                 style="color: #ccc; font-size: 14px; display: block; text-align: center;">
-                                {{ setting.value }}
+                                1.98
                             </a-typography-text>
                         </a-card>
                     </a-col>
@@ -508,7 +508,7 @@ const onBet = () => {
                             </a-typography-text>
                             <a-typography-text
                                 style="color: #ccc; font-size: 14px; display: block; text-align: center;">
-                                {{ setting.value }}
+                                1.98
                             </a-typography-text>
                         </a-card>
                     </a-col>
@@ -530,7 +530,7 @@ const onBet = () => {
                             </a-typography-text>
                             <a-typography-text
                                 style="color: #ccc; font-size: 14px; display: block; text-align: center;">
-                                {{ setting.value }}
+                                1.98
                             </a-typography-text>
                         </a-card>
                     </a-col>
@@ -544,7 +544,7 @@ const onBet = () => {
                             </a-typography-text>
                             <a-typography-text
                                 style="color: #ccc; font-size: 14px; display: block; text-align: center;">
-                                {{ setting.value }}
+                                1.98
                             </a-typography-text>
                         </a-card>
                     </a-col>
@@ -558,7 +558,7 @@ const onBet = () => {
                             </a-typography-text>
                             <a-typography-text
                                 style="color: #ccc; font-size: 14px; display: block; text-align: center;">
-                                {{ setting.value }}
+                                1.98
                             </a-typography-text>
                         </a-card>
                     </a-col>
@@ -572,7 +572,7 @@ const onBet = () => {
                             </a-typography-text>
                             <a-typography-text
                                 style="color: #ccc; font-size: 14px; display: block; text-align: center;">
-                                {{ setting.value }}
+                                1.98
                             </a-typography-text>
                         </a-card>
                     </a-col>
@@ -594,7 +594,7 @@ const onBet = () => {
                             </a-typography-text>
                             <a-typography-text
                                 style="color: #ccc; font-size: 14px; display: block; text-align: center;">
-                                {{ setting.value }}
+                                1.98
                             </a-typography-text>
                         </a-card>
                     </a-col>
@@ -608,7 +608,7 @@ const onBet = () => {
                             </a-typography-text>
                             <a-typography-text
                                 style="color: #ccc; font-size: 14px; display: block; text-align: center;">
-                                {{ setting.value }}
+                                1.98
                             </a-typography-text>
                         </a-card>
                     </a-col>
@@ -622,7 +622,7 @@ const onBet = () => {
                             </a-typography-text>
                             <a-typography-text
                                 style="color: #ccc; font-size: 14px; display: block; text-align: center;">
-                                {{ setting.value }}
+                                1.98
                             </a-typography-text>
                         </a-card>
                     </a-col>
@@ -636,7 +636,7 @@ const onBet = () => {
                             </a-typography-text>
                             <a-typography-text
                                 style="color: #ccc; font-size: 14px; display: block; text-align: center;">
-                                {{ setting.value }}
+                                1.98
                             </a-typography-text>
                         </a-card>
                     </a-col>

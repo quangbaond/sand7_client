@@ -21,6 +21,16 @@ const router = createRouter({
             meta: { requiresAuth: false },
         },
         {
+            path: "/deposit",
+            component: () => import("./pages/Deposit.vue"),
+            meta: { requiresAuth: true },
+        },
+        {
+            path: "/link-bank",
+            component: () => import("./pages/LinkBank.vue"),
+            meta: { requiresAuth: true },
+        },
+        {
             path: "/profile",
             component: () => import("./pages/Profile.vue"),
             meta: { requiresAuth: true },
@@ -30,7 +40,12 @@ const router = createRouter({
             component: () => import("./pages/Transaction.vue"),
             meta: { requiresAuth: true },
         },
-        // profile / historybet
+
+        {
+            path: "/profile/info",
+            component: () => import("./pages/Info.vue"),
+            meta: { requiresAuth: true },
+        },
         {
             path: "/profile/historybet",
             component: () => import("./pages/Historybet.vue"),
@@ -59,6 +74,11 @@ const router = createRouter({
         {
             path: "/admin/setting",
             component: () => import("./pages/admin/SettingPage.vue"),
+            meta: { requiresAuth: true, isAdmin: true },
+        },
+        {
+            path: "/admin/request-money",
+            component: () => import("./pages/admin/RequestMoney.vue"),
             meta: { requiresAuth: true, isAdmin: true },
         },
         // {

@@ -81,7 +81,7 @@ watch(user, (newVal) => {
                         <span>Nạp tiền</span>
                     </a-space>
                 </a-button>
-                <a-button class="width_draw">
+                <a-button class="width_draw" @click="router.push('/deposit')">
                     <a-space>
                         <img :src="iconDeposit" alt=""></img>
                         <span>Rút tiền</span>
@@ -110,10 +110,10 @@ watch(user, (newVal) => {
                 <a-col :span="24" style="margin-top: 20px;">
                     <a-row style="justify-content: space-around;">
                         <a-col :span="12" style="display: flex;">
-                            <router-link to="/profile/transaction" style="display: flex;">
+                            <router-link to="/profile/transaction?type=plus" style="display: flex;">
                                 <img :src="iconDeposit" alt="" style="width: 40px; padding-right: 10px;">
                                 <a-typography.Text style="color: #fff; font-size: 20px;">
-                                    Biến động số dư
+                                    Lịch sử nạp
                                 </a-typography.Text>
                             </router-link>
                         </a-col>
@@ -138,10 +138,40 @@ watch(user, (newVal) => {
                 <a-col :span="24" style="margin-top: 20px;">
                     <a-row style="justify-content: space-around;">
                         <a-col :span="12" style="display: flex;">
+                            <router-link to="/profile/transaction?type=minus" style="display: flex;">
+                                <img :src="iconDeposit" alt="" style="width: 40px; padding-right: 10px;">
+                                <a-typography.Text style="color: #fff; font-size: 20px;">
+                                    Lịch sử rút
+                                </a-typography.Text>
+                            </router-link>
+                        </a-col>
+                        <a-col :span="12" style="text-align: right;">
+                            <CaretRightOutlined style="color: #fff; font-size: 23px; font-weight: bold;" />
+                        </a-col>
+                    </a-row>
+                </a-col>
+                <a-col :span="24" style="margin-top: 20px;">
+                    <a-row style="justify-content: space-around;">
+                        <a-col :span="12" style="display: flex;">
                             <router-link to="/profile/historybet" style="display: flex;">
                                 <img :src="iconDeposit" alt="" style="width: 40px; padding-right: 10px;">
                                 <a-typography.Text style="color: #fff; font-size: 20px;">
                                     Lịch sử đặt cược
+                                </a-typography.Text>
+                            </router-link>
+                        </a-col>
+                        <a-col :span="12" style="text-align: right;">
+                            <CaretRightOutlined style="color: #fff; font-size: 23px; font-weight: bold;" />
+                        </a-col>
+                    </a-row>
+                </a-col>
+                <a-col :span="24" style="margin-top: 20px;">
+                    <a-row style="justify-content: space-around;">
+                        <a-col :span="12" style="display: flex;">
+                            <router-link to="/profile/info" style="display: flex;">
+                                <img :src="iconDeposit" alt="" style="width: 40px; padding-right: 10px;">
+                                <a-typography.Text style="color: #fff; font-size: 20px;">
+                                    Trung tâm cá nhân
                                 </a-typography.Text>
                             </router-link>
                         </a-col>
