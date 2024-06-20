@@ -6,7 +6,7 @@ import iconDeposit from '@/assets/images/icons/profile/deposit.svg'
 import { CaretRightOutlined, HomeOutlined } from '@ant-design/icons-vue';
 import { ref, reactive } from 'vue';
 import axios from '@/common/axios.js';
-import router from '../router';
+import { useRouter } from 'vue-router';
 import { banks } from '../common/constants';
 import { layer } from '@layui/layer-vue';
 
@@ -15,6 +15,7 @@ const user = ref(getStorage('user'))
 const staticUrl = import.meta.env.VITE_APP_STATIC_URL ?? 'http://localhost:3000'
 const formattedBalanceUser = ref(formatCurrency(user.balance))
 const formattedBetTodayUser = ref(formatCurrency(user.betToday))
+const router = useRouter();
 const formState = reactive({
     bankAccountNumber: '',
     bankName: '',
@@ -100,7 +101,7 @@ const onFinishFailed = errorInfo => {
                 @finishFailed="onFinishFailed">
                 <a-form-item label="CHọn ngân hàng" name="bankBranch"
                     :rules="[{ required: true, message: 'Vui lòng chọn ngân hàng' }]">
-                    <a-select v-model:value="formState.bankBranch">
+                    <a-select v-model:value="formState.bankName">
                         <a-select-option :value="bank.short_name" v-for="bank in banks" :key="bank.short_name">
                             {{ `(${bank.short_name}) ${bank.name}` }}
                         </a-select-option>

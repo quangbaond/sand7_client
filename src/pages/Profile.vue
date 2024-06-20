@@ -3,19 +3,27 @@ import { getStorage } from '@/common'
 import { onMounted, watch } from 'vue'
 import { formatCurrency } from '../common';
 import iconDeposit from '@/assets/images/icons/profile/deposit.svg'
-import { CaretRightOutlined, HomeOutlined } from '@ant-design/icons-vue';
+import { CaretRightOutlined, HomeOutlined, LogoutOutlined } from '@ant-design/icons-vue';
 import { ref } from 'vue';
 import axios from '@/common/axios.js';
-import router from '../router';
+import { useRouter } from 'vue-router';
+import { layer } from '@layui/layer-vue';
 
 const user = ref(getStorage('user'))
+const router = useRouter();
 const staticUrl = import.meta.env.VITE_APP_STATIC_URL ?? 'http://localhost:3000'
 const formattedBalanceUser = ref(formatCurrency(user.balance))
 const formattedBetTodayUser = ref(formatCurrency(user.betToday))
+const formattedWinTodayUser = ref(formatCurrency(user.balance))
+const totalOnbet = ref({
+    totalOnbet: 0,
+    totalWin: 0
+});
 onMounted(() => {
     // console.log(user)
     axios.get('/me/profile').then((res) => {
         user.value = res.user;
+        totalOnbet.value = res.totalOnbet;
     }).catch((err) => {
         console.log(err);
         router.push('/login');
@@ -23,8 +31,26 @@ onMounted(() => {
 })
 watch(user, (newVal) => {
     formattedBalanceUser.value = formatCurrency(newVal.balance);
-    formattedBetTodayUser.value = formatCurrency(newVal.betToday);
+    // formattedBetTodayUser.value = formatCurrency(newVal.totalOnbet.totalOnbet);
 })
+watch(totalOnbet, (newVal) => {
+    console.log(newVal);
+    formattedBetTodayUser.value = formatCurrency(newVal.totalOnbet);
+    formattedWinTodayUser.value = formatCurrency(newVal.totalWin);
+})
+const logout = () => {
+    axios.post('/auth/logout').then((res) => {
+        localStorage.removeItem('token');
+        localStorage.removeItem('user');
+        layer.msg('Đăng xuất thành công', {
+            icon: 1,
+            time: 2000
+        });
+        router.push('/login');
+    }).catch((err) => {
+        console.log(err);
+    });
+}
 </script>
 
 <template>
@@ -50,13 +76,13 @@ watch(user, (newVal) => {
                         </a-typography.Title>
                     </a-space>
                 </a-col>
-                <!-- <a-col :span="8">
+                <a-col :span="8">
                     <a-space direction="vertical">
                         <a-typography.Title level="5" style="color: #5d636e; display: block; height: 30px;">
                             Đặt cược hôm nay
                         </a-typography.Title>
                         <a-typography.Title level="5" style="color: #fff; font-size: 20px;">
-                            {{ formattedBalanceUser }}
+                            {{ formattedBetTodayUser }}
                         </a-typography.Title>
                     </a-space>
                 </a-col>
@@ -66,10 +92,10 @@ watch(user, (newVal) => {
                             Lãi và lỗ hôm nay
                         </a-typography.Title>
                         <a-typography.Title level="5" style="color: #fff; font-size: 20px;">
-                            {{ formattedBalanceUser }}
+                            {{ formattedWinTodayUser }}
                         </a-typography.Title>
                     </a-space>
-                </a-col> -->
+                </a-col>
             </a-row>
         </div>
 
@@ -174,6 +200,25 @@ watch(user, (newVal) => {
                                     Trung tâm cá nhân
                                 </a-typography.Text>
                             </router-link>
+                        </a-col>
+                        <a-col :span="12" style="text-align: right;">
+                            <CaretRightOutlined style="color: #fff; font-size: 23px; font-weight: bold;" />
+                        </a-col>
+                    </a-row>
+                    <!-- // logout -->
+
+
+                </a-col>
+                <!-- // logout -->
+                <a-col :span="24" style="margin-top: 20px;">
+                    <a-row style="justify-content: space-around;">
+                        <a-col :span="12" style="display: flex;">
+                            <a @click="logout" style="display: flex;">
+                                <LogoutOutlined style="color: #fff; font-size: 23px; font-weight: bold;" />
+                                <a-typography.Text style="color: #fff; font-size: 20px; padding-left: 15px">
+                                    Đăng xuất
+                                </a-typography.Text>
+                            </a>
                         </a-col>
                         <a-col :span="12" style="text-align: right;">
                             <CaretRightOutlined style="color: #fff; font-size: 23px; font-weight: bold;" />

@@ -64,7 +64,8 @@ const updateData = (data) => {
             ...item,
             resultSession: item.betData.betData.join(','),
             username: username,
-            betInUserText: finalMessage
+            betInUserText: finalMessage,
+            id: item.betData.id,
         };
     });
 };
@@ -146,6 +147,11 @@ const columns = [
 ]
 const columns2 = [
     {
+        title: 'Phiên ID',
+        dataIndex: 'id',
+        key: 'id',
+    },
+    {
         title: 'Người dùng',
         dataIndex: 'username',
         key: 'username',
@@ -226,6 +232,20 @@ watch(() => betDataOnServer.value._id, (newVal) => {
         });
     }
 });
+const searchValue = ref('');
+const onSearch = (value) => {
+    run({
+        username: value,
+    });
+}
+
+const searchValue2 = ref('');
+
+const onSearch2 = (value) => {
+    run({
+        search: value
+    });
+}
 
 </script>
 <template>
@@ -259,6 +279,18 @@ watch(() => betDataOnServer.value._id, (newVal) => {
                                 </a-table>
                             </a-tab-pane>
                             <a-tab-pane key="2" tab="Tất cả">
+                                <!-- // search -->
+                                <a-row gutter="10">
+                                    <a-col :span="12">
+                                        <a-input-search style="margin-bottom: 10px;" v-model:value="searchValue"
+                                            @search="onSearch" placeholder="Tìm kiếm người dùng" />
+                                    </a-col>
+                                    <a-col :span="12" style="text-align: right;">
+                                        <a-input-search style="margin-bottom: 10px;" v-model:value="searchValue2"
+                                            @search="onSearch2" placeholder="Tìm kiếm khác" />
+                                    </a-col>
+                                </a-row>
+
                                 <a-table @change="handleTableChange" :columns="columns2" :data-source="dataSource2"
                                     bordered :pagination="pagination">
                                 </a-table>

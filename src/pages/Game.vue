@@ -12,6 +12,7 @@ import iconCoinAll from '@/assets/images/icons/games/coin/all.png'
 import { socket } from "@/socket";
 import { layer } from "@layui/layer-vue";
 import axios from '@/common/axios';
+import moment from 'moment';
 const betDataOnServer = ref(null)
 const user = ref(getStorage('user'))
 const formattedBalanceUser = ref(formatCurrency(user.value.balance))
@@ -76,6 +77,14 @@ const changeBalance = (amount, calculation = '+') => {
     formattedBalanceUser.value = formatCurrency(user.value.balance)
 
 }
+const visible = ref(false);
+const showModal = () => {
+    visible.value = true;
+};
+const handleOk = e => {
+    console.log(e);
+    visible.value = false;
+};
 
 // hiệu ứng hiển thị kết quả khi đang quay quả bóng
 const wheelResult = ref(null)
@@ -174,6 +183,19 @@ const onBet = () => {
     changeBalance(amount.value * betInUser.value.length, '-')
 
 }
+const historyBet = ref([])
+const getHistoryBet = (type) => {
+    axios.get(`/history/get/${type}`).then((res) => {
+        historyBet.value = res.docs
+    }).catch((err) => {
+        console.log(err);
+    })
+}
+watch(() => visible.value, (value) => {
+    if (value) {
+        getHistoryBet(codeInParam)
+    }
+})
 
 </script>
 
@@ -186,9 +208,9 @@ const onBet = () => {
                 <a-typography-text style="color: #fff; font-size: 14px; display: block;">
                     Số dư: {{ formattedBalanceUser }}
                 </a-typography-text>
-                <a-typography-text style="color: #fff; font-size: 14px; display: block;">
+                <!-- <a-typography-text style="color: #fff; font-size: 14px; display: block;">
                     Nhiều màu
-                </a-typography-text>
+                </a-typography-text> -->
             </a-space>
         </div>
         <div class="result_wrap sticky">
@@ -196,7 +218,7 @@ const onBet = () => {
                 <a-col :span="11">
                     <a-typography-text
                         style="color: #fff; font-size: 16px; display: block; font-weight: 600; text-align: center;">
-                        KQ mở thưởng
+                        Kết quả mở thưởng
                     </a-typography-text>
                     <a-row span="10" style="justify-content: center;">
                         <a-col :span="6">
@@ -247,12 +269,13 @@ const onBet = () => {
                     </a-typography-text>
                 </a-col>
                 <a-col :span="2">
-                    <ReloadOutlined style="color: #fff; font-size: 20px; font-weight: 900;" />
+                    <ReloadOutlined style="color: #fff; font-size: 20px; font-weight: 900; cursor: pointer;" />
                 </a-col>
             </a-row>
             <div
                 style="text-align: center; width: 25px; margin: auto; background-color: #0f1d30; height: 25px; display: flex; justify-content: center;">
-                <ArrowDownOutlined style="color: #fff; font-size: 15px; font-weight: 900; align-self: center;" />
+                <ArrowDownOutlined style="color: #fff; font-size: 15px; font-weight: 900; align-self: center;"
+                    @click="showModal" />
             </div>
         </div>
 
@@ -688,6 +711,52 @@ const onBet = () => {
             </a-row>
         </div>
     </div>
+    <a-modal v-model:visible="visible" title="Lịch sử phiên" :footer="null" centered>
+        <a-row style="margin-bottom: 10px;">
+            <a-col :span="8">
+                <a-typography-text
+                    style="color: #fff; font-size: 16px; display: block; font-weight: 600; text-align: center;">
+                    ID
+                </a-typography-text>
+            </a-col>
+            <a-col :span="8">
+                <a-typography-text
+                    style="color: #fff; font-size: 16px; display: block; font-weight: 600; text-align: center;">
+                    Số giả thưởng
+                </a-typography-text>
+            </a-col>
+            <a-col :span="8">
+                <a-typography-text
+                    style="color: #fff; font-size: 16px; display: block; font-weight: 600; text-align: center;">
+                    Thời gian
+                </a-typography-text>
+            </a-col>
+        </a-row>
+        <a-row guuter="10" v-for="bet in historyBet" :key="bet._id" style="margin-bottom: 10px;">
+            <a-col :span="8">
+                <a-typography-text
+                    style="color: #fff; font-size: 13px; display: block; font-weight: 600; text-align: center;">
+                    {{ bet.betData.id }}
+                </a-typography-text>
+            </a-col>
+            <a-col :span="8">
+                <a-row gutter="15" style="justify-content: center;">
+                    <a-col :span="4" v-for="betN in bet.betData.betData" :key="betN">
+                        <a-typography-text class="result_item2"
+                            style="color: #fff; font-size: 13px; display: block; text-align: center;">
+                            {{ betN }}
+                        </a-typography-text>
+                    </a-col>
+                </a-row>
+            </a-col>
+            <a-col :span="8">
+                <a-typography-text
+                    style="color: #fff; font-size: 13px; display: block; font-weight: 600; text-align: center;">
+                    {{ moment(bet.betData.timeEnd).format('H:mm:ss') }}
+                </a-typography-text>
+            </a-col>
+        </a-row>
+    </a-modal>
 </template>
 
 <style>
@@ -698,6 +767,7 @@ const onBet = () => {
 
 .bet_wrap {
     margin: 20px 0;
+    margin-bottom: 90px;
 }
 
 .coin_item {
@@ -709,6 +779,14 @@ const onBet = () => {
     height: 30px;
     background-image: linear-gradient(179deg, #13a2ba, #087c95);
     margin: 5px;
+    border-radius: 100%;
+}
+
+.result_item2 {
+    width: 20px;
+    height: 20px;
+    background-image: linear-gradient(179deg, #13a2ba, #087c95);
+    /* margin: 5px; */
     border-radius: 100%;
 }
 
@@ -738,6 +816,12 @@ const onBet = () => {
     margin-bottom: 0;
 }
 
+.ant-modal-content,
+.ant-modal-header {
+    background-color: #0f1d30 !important;
+    color: #fff !important;
+}
+
 .sticky {
     position: -webkit-sticky
         /* Safari */
@@ -753,16 +837,27 @@ const onBet = () => {
 
 .ant-card-body {
     padding: 10px !important;
+    cursor: pointer;
 }
 
 .onbet {
     background-color: #0f1d30;
-    margin: 10px;
+    /* margin: 10px; */
     padding: 10px;
-    border-radius: 15px;
+    /* border-radius: 15px; */
     box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
     margin-bottom: 0;
+    bottom: 0;
+    max-width: 576px;
+    width: -webkit-fill-available;
+    position: fixed;
 }
+
+/* background-color: rgb(19, 34, 53);
+padding: 25px 10px;
+text-align: center;
+position: fixed; */
+
 
 #coin10k {
     background-image: url(@/assets/images/icons/games/coin/10k.png);
@@ -773,5 +868,10 @@ const onBet = () => {
     text-align: center;
     padding: 10px;
     cursor: pointer;
+}
+
+.ant-modal-title,
+.ant-modal-close-x {
+    color: #fff !important;
 }
 </style>

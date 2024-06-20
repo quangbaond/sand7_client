@@ -117,9 +117,9 @@ const router = useRouter();
                                 Tài khoản
                             </a-typography-text>
                         </a-space>
-                        <a-space align="center" direction="vertical">
+                        <!-- <a-space align="center" direction="vertical">
                             <router-link to="/admin" v-if="user.role === 'admin'">Admin</router-link>
-                        </a-space>
+                        </a-space> -->
 
                     </a-space>
                 </a-space>
@@ -145,32 +145,32 @@ const router = useRouter();
             </div>
         </div>
         <div class="footer">
-            <a-space align="center" style="justify-content: space-between; display: flex;">
-                <a-space direction="vertical">
+            <a-space align="center" style="justify-content: space-between; display: flex; cursor: pointer;">
+                <a-space direction="vertical" @click="router.push('/')">
                     <img :src="iconHome" alt="" style="width: 20px;">
                     <a-typography-text style="color: #fff; font-size: 14px; display: block;">
                         Trang chủ
                     </a-typography-text>
                 </a-space>
-                <a-space direction="vertical">
+                <a-space direction="vertical" @click="router.push('/profile/historybet')" style="cursor: pointer;">
                     <img :src="iconHistoryBet" alt="" style="width: 20px;">
                     <a-typography-text style="color: #fff; font-size: 14px; display: block;">
                         Lịch sử cược
                     </a-typography-text>
                 </a-space>
-                <a-space direction="vertical">
+                <!-- <a-space direction="vertical">
                     <img :src="iconLottery" alt="" style="max-width: 20px;">
                     <a-typography-text style="color: #fff; font-size: 14px; display: block;">
                         Sảnh xổ số
                     </a-typography-text>
-                </a-space>
+                </a-space> -->
                 <a-space direction="vertical">
                     <img :src="iconCSKH" alt="" style="max-width: 20px;">
                     <a-typography-text style="color: #fff; font-size: 14px; display: block;">
                         CSKH
                     </a-typography-text>
                 </a-space>
-                <a-space direction="vertical" @click="router.push('/profile')">
+                <a-space direction="vertical" @click="router.push('/profile')" style="cursor: pointer;">
                     <img :src="iconProfile" alt="" style="max-width: 20px;">
                     <a-typography-text style="color: #fff; font-size: 14px; display: block;">
                         Tôi
@@ -184,12 +184,13 @@ const router = useRouter();
 <style>
 .footer {
     background-color: rgb(19, 34, 53);
-    padding: 25px 10px;
+    padding: 15px 10px;
     text-align: center;
     /* position: fixed; */
     bottom: 0;
     max-width: 576px;
     width: -webkit-fill-available;
+    position: fixed;
 
 }
 
@@ -200,6 +201,7 @@ const router = useRouter();
 
 .slider-footer {
     margin: 20px 0;
+    margin-bottom: 100px;
 }
 
 .main {

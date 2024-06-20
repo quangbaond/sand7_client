@@ -8,6 +8,7 @@ import { ref } from 'vue';
 import axios from '@/common/axios.js';
 import { useRouter } from 'vue-router';
 import { cloneDeep } from 'lodash-es';
+import { layer } from '@layui/layer-vue';
 
 const user = ref(getStorage('user'))
 const staticUrl = import.meta.env.VITE_APP_STATIC_URL ?? 'http://localhost:3000'
@@ -15,86 +16,24 @@ const formattedBalanceUser = ref(formatCurrency(user.balance))
 const formattedBetTodayUser = ref(formatCurrency(user.betToday))
 const router = useRouter();
 const dataSource = ref([]);
-const columns = [
-    {
-        title: 'Phiên',
-        dataIndex: 'sessionId',
-        key: 'sessionId',
-    },
-    {
-        title: 'Số đặt cược',
-        dataIndex: 'betInUserText',
-        key: 'betInUserText',
-    },
-    {
-        title: 'Số tiền cược',
-        dataIndex: 'amount',
-        key: 'betDataText',
-    },
-    //resultSession
-    {
-        title: 'Kết quả',
-        dataIndex: 'resultSession',
-        key: 'resultSession',
-    },
-    {
-        title: 'Thời gian',
-        dataIndex: 'createdAt',
-        key: 'createdAt',
-        customRender: (text) => {
-            return formatDateTime(text)
-        }
-    },
+const text = `A dog is a type of domesticated animal.Known for its loyalty and faithfulness,it can be found as a welcome guest in many households across the world.`;
+const activeKey = ref([]);
+const formState = ref({
+    fullname: user.value.fullname,
+    email: user.value.email,
+    phone: user.value.phone,
+})
 
-]
-const pagination = ref(
-    {
-        pageSize: 10,
-        showSizeChanger: false,
-        showQuickJumper: false,
-        showTotal: (total) => `Total ${total} items`,
-    }
-)
 
-const updateData = (data) => {
-    const valueToMessage = {
-        1: "Lớn",
-        2: "Nhỏ",
-        3: "Lẻ",
-        4: "Chẵn"
-    };
-
-    return data.map((item) => {
-        const idToMessage = ["số đầu tiên", "số thứ hai", "số thứ ba", "số thứ tư", "số thứ năm"];
-
-        // Tạo message cho từng betInUser
-        const messages = item.betInUser.map((bet, index) => {
-            const idMessage = idToMessage[index] || `số thứ ${index + 1}`;
-            const valueMessage = valueToMessage[bet.value] || `value ${bet.value}`;
-            return `${idMessage}: ${valueMessage}`;
-        });
-
-        // Ghép các message lại với nhau
-        const finalMessage = messages.join(" - ");
-
-        // Trả về đối tượng mới với các trường đã cập nhật
-        return {
-            ...item,
-            sessionId: item.betData?.id,
-            resultSession: item.betData.betData.join(','),
-            betInUserText: finalMessage,
-            createAt: formatDateTime(item.createdAt),
-            amount: formatCurrency(item.amount)
-
-        };
-    });
-};
 
 
 onMounted(() => {
     // console.log(user)
     axios.get('/me/profile').then((res) => {
         user.value = res.user;
+        formState.value.email = res.user.email;
+        formState.value.phone = res.user.phone;
+        formState.value.fullname = res.user.fullname;
     }).catch((err) => {
         console.log(err);
         router.push('/login');
@@ -104,6 +43,23 @@ watch(user, (newVal) => {
     formattedBalanceUser.value = formatCurrency(newVal.balance);
     formattedBetTodayUser.value = formatCurrency(newVal.betToday);
 })
+const updateInfo = (field, value) => {
+    axios.put('/me/profile', {
+        [field]: value
+    }).then((res) => {
+        user.value = res.user;
+        layer.msg('Cập nhật thông tin thành công', {
+            icon: 1,
+            time: 2000
+        });
+    }).catch((err) => {
+        console.log(err);
+        layer.msg('Cập nhật thông tin thất bại', {
+            icon: 2,
+            time: 2000
+        });
+    });
+}
 </script>
 
 <template>
@@ -153,6 +109,39 @@ watch(user, (newVal) => {
 
         <div class="navigation">
             <h3 style="color: #ccc;">Thông tin cá nhân</h3>
+            <a-collapse v-model:activeKey="activeKey" accordion>
+                <a-collapse-panel key="1" header="Tài khoản">
+                    <p>{{ user.username }}</p>
+                </a-collapse-panel>
+                <a-collapse-panel key="2" header="Ngân hàng liên kết" :disabled="false">
+                    <p>
+                        <router-link to="/link-bank">Ngân hàng liên kết</router-link>
+                    </p>
+                </a-collapse-panel>
+                <a-collapse-panel key="3" header="Email">
+                    <p>Liên kết email</p>
+                    <a-input v-model:value="formState.email" />
+                    <a-button type="primary" @click="updateInfo('email', formState.email)"
+                        style="width: 100%; margin: 10px 0;">Cập
+                        nhật</a-button>
+                </a-collapse-panel>
+                <!-- // số điệ thoại -->
+                <a-collapse-panel key="4" header="Số điện thoại">
+                    <p>Liên kết số điện thoại</p>
+                    <a-input v-model:value="formState.phone" />
+                    <a-button type="primary" @click="updateInfo('phone', formState.phone)"
+                        style="width: 100%; margin: 10px 0;">Cập
+                        nhật</a-button>
+                </a-collapse-panel>
+                <!-- // fullname -->
+                <a-collapse-panel key="5" header="Họ và tên">
+                    <p>Họ và tên</p>
+                    <a-input v-model:value="formState.fullname" />
+                    <a-button type="primary" @click="updateInfo('fullname', formState.fullname)"
+                        style="width: 100%; margin: 10px 0;">Cập
+                        nhật</a-button>
+                </a-collapse-panel>
+            </a-collapse>
         </div>
 
     </div>
@@ -226,5 +215,17 @@ watch(user, (newVal) => {
 
 .ant-pagination-options-quick-jumper {
     color: #fff !important;
+}
+
+.ant-collapse-content-box p {
+    color: #fff !important;
+}
+
+.ant-collapse-header {
+    color: #fff !important;
+}
+
+.ant-collapse-content-box {
+    background-color: #0C192C !important;
 }
 </style>

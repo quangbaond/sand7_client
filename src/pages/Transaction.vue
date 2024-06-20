@@ -113,7 +113,8 @@ watch(user, (newVal) => {
         <div class="transaction">
             <h3 style="color: #ccc;">Biến động số dư</h3>
 
-            <div class="transaction_box" v-for="balance in balanceFluctuations" :key="balance._id">
+            <div class="transaction_box" v-for="balance in balanceFluctuations" :key="balance._id"
+                v-if="balanceFluctuations.length">
                 <a-space direction="vertical">
                     <a-typography.Title v-if="balance.type === 'plus'" level="5" style="color: green; font-size: 23px;">
                         + {{ formatCurrency(balance.amount) }}
@@ -126,6 +127,12 @@ watch(user, (newVal) => {
                     </a-typography.Title>
 
                 </a-space>
+            </div>
+            <div v-else>
+                <a-typography.Title
+                    style="color: #fff; display: block; height: 30px;font-size: 18px; text-align: center;">
+                    Không có dữ liệu
+                </a-typography.Title>
             </div>
         </div>
 

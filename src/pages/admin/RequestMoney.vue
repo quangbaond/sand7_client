@@ -100,8 +100,17 @@ const cancel = key => {
 //         console.log(err);
 //     });
 // }
-onMounted(() => {
-    axios.get('/users/get-request-money').then((res) => {
+
+const pagination = ref({
+    current: 1,
+    pageSize: 10,
+    total: dataSource.value.length,
+    showSizeChanger: true,
+    showQuickJumper: true,
+    showTotal: total => `Total ${total} items`,
+})
+const run = (params) => {
+    axios.get('/users/get-request-money', { params }).then((res) => {
         console.log(res);
         // dataSource.value = res;
         const data = res;
@@ -113,9 +122,33 @@ onMounted(() => {
                 status: item.status == 'pending' ? 'Đang chờ' : item.status == 'accept' ? 'Đã chấp nhận' : 'Từ chối',
             }
         });
+        pagination.value = {
+            current: data.page,
+            pageSize: data.limit,
+            total: data.totalDocs,
+            showSizeChanger: true,
+            showQuickJumper: true,
+            showTotal: total => `Tổng kết qủa ${res.totalDocs} kết quả`,
+        }
     }).catch((err) => {
         console.log(err);
     });
+}
+
+
+const handelChangeTable = ({ param }) => {
+    run(param)
+}
+const searchValue = ref('');
+const onSearch = (value) => {
+    run({
+        page: 1,
+        limit: 10,
+        username: value,
+    });
+}
+onMounted(() => {
+    run({ page: 1, limit: 10 })
 });
 // watch(dataSource, (newVal) => {
 //     const data = newVal;
@@ -136,7 +169,14 @@ onMounted(() => {
         <a-layout-content style="padding: 20px 50px">
             <div :style="{ background: '#fff', padding: '12px', minHeight: 'calc(100vh - 190px)' }">
                 <h3>Quản lý nạp rút</h3>
-                <a-table :columns="columns" :data-source="dataSource" bordered>
+                <a-row>
+                    <a-col :span="24">
+                        <a-input-search v-model:value="searchValue" @search="onSearch"
+                            placeholder="Tìm kiếm theo tên người dùng" enter-button />
+                    </a-col>
+                </a-row>
+                <a-table :columns="columns" :data-source="dataSource" bordered :pagination="pagination"
+                    @change="handelChangeTable">
                     <template #bodyCell="{ column, text, record }">
                         <template v-if="['balance', 'phone', 'email'].includes(column.dataIndex)">
                             <div>

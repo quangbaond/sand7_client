@@ -21,7 +21,7 @@ const router = createRouter({
             meta: { requiresAuth: false },
         },
         {
-            path: "/deposit",
+            path: "/desposit",
             component: () => import("./pages/Deposit.vue"),
             meta: { requiresAuth: true },
         },

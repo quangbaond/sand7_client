@@ -15,11 +15,22 @@ const dataSource = ref([
         email: 'admin@gmail.com',
     }
 ]);
+const pagination = ref({
+    pageSize: 10,
+    showSizeChanger: false,
+    showQuickJumper: false,
+    showTotal: (total) => `Total ${total} items`,
+});
 const columns = [
     {
         title: 'Tên đăng nhập',
         dataIndex: 'username',
         key: 'username',
+    },
+    {
+        title: 'Ip đằng nhập',
+        dataIndex: 'ipAddress',
+        key: 'ipAddress',
     },
     {
         title: 'Quyền',
@@ -111,10 +122,89 @@ onMounted(() => {
                 key: item._id,
             }
         });
+        pagination.value = {
+            ...pagination.value,
+            total: res.totalDocs + 1,
+            pageSize: res.limit,
+            current: res.page,
+            showSizeChanger: true,
+            showQuickJumper: true,
+            showTotal: total => `Tổng kết qủa ${res.totalDocs} kết quả`,
+        }
     }).catch((err) => {
         console.log(err);
     });
 });
+const visible = ref(false);
+const userAction = ref({
+    bankName: '',
+    bankAccountNumber: '',
+    bankBranch: '',
+    bankAccountName: ''
+
+});
+const showModal = (record) => {
+    console.log(record);
+    userAction.value = record;
+    visible.value = true;
+};
+const handleOk = e => {
+    console.log(e);
+    visible.value = false;
+};
+const run = (params) => {
+    loading.value = true;
+    axios.get('/users/list', {
+        params: {
+            page: params.current,
+            limit: params.pageSize,
+            search: params.search || ''
+        }
+    }).then((res) => {
+        console.log(res);
+        // dataSource.value = res;
+        const data = res;
+        dataSource.value = data.docs.map((item, index) => {
+            return {
+                ...item,
+                key: item._id,
+            }
+        });
+        pagination.value = {
+            ...pagination.value,
+            total: res.totalDocs + 1,
+            pageSize: res.limit,
+            current: res.page,
+            showSizeChanger: true,
+            showQuickJumper: true,
+            showTotal: total => `Tổng kết qủa ${res.totalDocs} kết quả`,
+        }
+        loading.value = false;
+    }).catch((err) => {
+        console.log(err);
+        loading.value = false;
+    });
+}
+const handelChangeTable = ({ params }) => {
+    run(params);
+
+}
+const formState = reactive({
+    search: '',
+});
+const onFinish = values => {
+    console.log('Success:', values);
+};
+const loading = ref(false);
+const search = (value) => {
+    loading.value = true;
+    console.log(value);
+    run({
+        current: 1,
+        pageSize: 10,
+        search: value
+    });
+}
 
 </script>
 <template>
@@ -123,7 +213,13 @@ onMounted(() => {
         <a-layout-content style="padding: 20px 50px">
             <div :style="{ background: '#fff', padding: '12px', minHeight: 'calc(100vh - 190px)' }">
                 <h3>Người dùng</h3>
-                <a-table :columns="columns" :data-source="dataSource" bordered>
+                <a-form layout="vertical" :model="formState" autocomplete="off" @finish="onFinish">
+                    <a-form-item v-model:value="formState.search">
+                        <a-input-search @search="search" placeholder="Tìm kiếm" :loading="loading" enter-button />
+                    </a-form-item>
+                </a-form>
+                <a-table @change="handelChangeTable" :columns="columns" :data-source="dataSource" bordered
+                    :pagination="pagination">
                     <template #bodyCell="{ column, text, record }">
                         <template v-if="['balance', 'phone', 'email'].includes(column.dataIndex)">
                             <div>
@@ -172,7 +268,7 @@ onMounted(() => {
                                         @confirm="dle(record._id)">
                                         <a href="#">Xóa</a>
                                     </a-popconfirm>
-
+                                    <a @click="showModal(record)">Ngân hàng</a>
                                 </span>
                             </div>
                         </template>
@@ -180,6 +276,12 @@ onMounted(() => {
                 </a-table>
             </div>
         </a-layout-content>
+        <a-modal v-model:visible="visible" title="Chi tiết ngân hàng" @ok="handleOk">
+            <p>Tên Ngân hàng: <span style="color: red">{{ userAction.bankName }}</span></p>
+            <p>Số tài khoản: <span style="color: red;">{{ userAction.bankAccountNumber }}</span></p>
+            <p>Chi nhánh: <span style="color: red;">{{ userAction.bankBranch }}</span></p>
+            <p>Tên tài khoản: <span style="color: red;">{{ userAction.bankAccountName }}</span></p>
+        </a-modal>
         <Footer></Footer>
     </a-layout>
 </template>
