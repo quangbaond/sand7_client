@@ -99,7 +99,7 @@ watch(user, (newVal) => {
                         <span>Nạp tiền</span>
                     </a-space>
                 </a-button>
-                <a-button class="width_draw">
+                <a-button class="width_draw" @click="router.push('/withdraw')">
                     <a-space>
                         <img :src="iconDeposit" alt=""></img>
                         <span>Rút tiền</span>

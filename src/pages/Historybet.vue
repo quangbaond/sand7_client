@@ -42,7 +42,7 @@ const columns = [
         dataIndex: 'createdAt',
         key: 'createdAt',
         customRender: (text) => {
-            return formatDateTime(text)
+            return formatDateTime(text.text)
         }
     },
 
@@ -89,6 +89,17 @@ const updateData = (data) => {
         };
     });
 };
+const pageSize = ref(20);
+const current1 = ref(3);
+const onShowSizeChange = (current, pageSize) => {
+    console.log(current, pageSize);
+};
+watch(pageSize, () => {
+    console.log('pageSize', pageSize.value);
+});
+watch(current1, () => {
+    console.log('current', current1.value);
+});
 
 
 onMounted(() => {
@@ -146,6 +157,11 @@ watch(user, (newVal) => {
     formattedBalanceUser.value = formatCurrency(newVal.balance);
     formattedBetTodayUser.value = formatCurrency(newVal.betToday);
 })
+const changePagination = (page) => {
+    run({
+        page: page,
+    });
+}
 </script>
 
 <template>
@@ -182,7 +198,7 @@ watch(user, (newVal) => {
                         <span>Nạp tiền</span>
                     </a-space>
                 </a-button>
-                <a-button class="width_draw" @click="router.push('/desposit')">
+                <a-button class="width_draw" @click="router.push('/withdraw')">
                     <a-space>
                         <img :src="iconDeposit" alt=""></img>
                         <span>Rút tiền</span>
@@ -195,8 +211,31 @@ watch(user, (newVal) => {
 
         <div class="navigation">
             <h3 style="color: #ccc;">Lịch sử đặt cược</h3>
-            <a-table :columns="columns" @change="handleTableChange" :dataSource="dataSource" bordered :hover="false"
-                resizeColumn :pagination="pagination"></a-table>
+            <!-- <a-table :columns="columns" @change="handleTableChange" :dataSource="dataSource" bordered :hover="false"
+                resizeColumn :pagination="pagination"></a-table> -->
+            <div class="result" v-for="data in dataSource">
+                <p>Phiên Id: {{ data.betData.id }}</p>
+                <p>Số đánh: {{ data.betInUserText }}</p>
+                <p>Số tiền cược: {{ formatCurrency(data.amount) }}</p>
+                <p>
+                    <!-- <span v-for="result in data.resultSession.split(',')" :key="result">{{ result }}</span> -->
+                    <a-row gutter="10" style="justify-content: center; align-items: center; align-self: center;">
+                        Kết quả:
+                        <a-col :span="4" v-for="betN in data.betData.betData" :key="betN">
+                            <a-typography-text class="result_item2"
+                                style="color: #fff; font-size: 16px; display: block; text-align: center;">
+                                {{ betN }}
+                            </a-typography-text>
+                        </a-col>
+                    </a-row>
+                </p>
+                <p>Thời gian: {{ formatDateTime(data.betData.timeEnd) }}</p>
+                <p>Số tiền thắng cược: {{ formatCurrency(data.win) }}</p>
+            </div>
+            <div class="pagination">
+                <a-pagination show-size-changer v-model:current="pagination.current"
+                    v-model:pageSize="pagination.pageSize" :total="pagination.total" @change="changePagination" />
+            </div>
         </div>
 
     </div>
@@ -205,6 +244,33 @@ watch(user, (newVal) => {
 <style>
 .navigation {
     padding: 15px;
+}
+
+.pagination {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin: 10px;
+}
+
+.result_item2 {
+    width: 30px;
+    height: 30px;
+    background-image: linear-gradient(179deg, #13a2ba, #087c95);
+    /* margin: 5px; */
+    border-radius: 100%;
+
+}
+
+.result {
+    padding: 10px;
+    background-color: #0f1d30;
+    margin: 10px;
+    border-radius: 15px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    /* text-align: center; */
+    color: #fff;
+
 }
 
 .action_money {

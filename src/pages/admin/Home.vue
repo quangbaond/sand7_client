@@ -6,6 +6,7 @@ import axios from '@/common/axios.js';
 import { cloneDeep } from 'lodash-es';
 import { formatDateTime } from '@/common';
 import { layer } from '@layui/layer-vue';
+import { formatCurrency } from '../../common';
 
 const dataSource = ref([
     {
@@ -28,7 +29,7 @@ const columns = [
         key: 'username',
     },
     {
-        title: 'Ip đằng nhập',
+        title: 'IP đăng nhập',
         dataIndex: 'ipAddress',
         key: 'ipAddress',
     },
@@ -51,13 +52,16 @@ const columns = [
         title: 'Số dư',
         dataIndex: 'balance',
         key: 'balance',
+        customRender: (text) => {
+            return formatCurrency(text.text);
+        }
     },
     {
         title: 'Trạng thái',
         dataIndex: 'status',
         key: 'status',
         customRender: (text) => {
-            return text == 'active' ? 'Kích hoạt' : 'Khóa';
+            return text.text === 'active' ? 'Kích hoạt' : 'Khóa';
         }
     },
     {
@@ -65,8 +69,7 @@ const columns = [
         dataIndex: 'createAt',
         key: 'createAt',
         customRender: (text) => {
-            // console.log(text);
-            return formatDateTime(text)
+            return formatDateTime(text.text)
         }
     },
     {
@@ -74,7 +77,7 @@ const columns = [
         dataIndex: 'lastLogin',
         key: 'lastLogin',
         customRender: (text) => {
-            return formatDateTime(text)
+            return formatDateTime(text.text)
         }
     },
     {
@@ -120,6 +123,9 @@ onMounted(() => {
             return {
                 ...item,
                 key: item._id,
+                status: item.status === 'active' ? 'Kích hoạt' : 'Khóa',
+                balance: formatCurrency(item.balance),
+                role: item.role === 'admin' ? 'Admin' : 'Người dùng',
             }
         });
         pagination.value = {
@@ -168,6 +174,9 @@ const run = (params) => {
             return {
                 ...item,
                 key: item._id,
+                status: item.status === 'active' ? 'Kích hoạt' : 'Khóa',
+                balance: formatCurrency(item.balance),
+                role: item.role === 'admin' ? 'Admin' : 'Người dùng',
             }
         });
         pagination.value = {
@@ -209,9 +218,9 @@ const search = (value) => {
 </script>
 <template>
     <a-layout>
-        <Header selectedKeys="1"></Header>
+        <Header :selectedKeys="['1']"></Header>
         <a-layout-content style="padding: 20px 50px">
-            <div :style="{ background: '#fff', padding: '12px', minHeight: 'calc(100vh - 190px)' }">
+            <div :style="{ background: '#fff', padding: '12px', minHeight: 'calc(100vh - 170px)' }">
                 <h3>Người dùng</h3>
                 <a-form layout="vertical" :model="formState" autocomplete="off" @finish="onFinish">
                     <a-form-item v-model:value="formState.search">
@@ -219,7 +228,7 @@ const search = (value) => {
                     </a-form-item>
                 </a-form>
                 <a-table @change="handelChangeTable" :columns="columns" :data-source="dataSource" bordered
-                    :pagination="pagination">
+                    :pagination="pagination" :scroll="{ x: 1500, y: 300 }">
                     <template #bodyCell="{ column, text, record }">
                         <template v-if="['balance', 'phone', 'email'].includes(column.dataIndex)">
                             <div>
@@ -258,7 +267,7 @@ const search = (value) => {
                             <div class="editable-row-operations">
                                 <span v-if="editableData[record.key]">
                                     <a-typography-link @click="save(record.key)">Lưu</a-typography-link>
-                                    <a-popconfirm title="Sure to cancel?" @confirm="cancel(record.key)">
+                                    <a-popconfirm title="Bạn có muốn hủy thao thác?" @confirm="cancel(record.key)">
                                         <a>Hủy</a>
                                     </a-popconfirm>
                                 </span>
@@ -266,9 +275,9 @@ const search = (value) => {
                                     <a @click="edit(record.key)">Chỉnh sửa</a>
                                     <a-popconfirm title="Bạn có muốn xóa người dùng này" ok-text="Xóa" cancel-text="Hủy"
                                         @confirm="dle(record._id)">
-                                        <a href="#">Xóa</a>
+                                        <a href="#" style="color: red;">Xóa</a>
                                     </a-popconfirm>
-                                    <a @click="showModal(record)">Ngân hàng</a>
+                                    <a @click="showModal(record)" style="color: green">Ngân hàng</a>
                                 </span>
                             </div>
                         </template>
@@ -276,7 +285,7 @@ const search = (value) => {
                 </a-table>
             </div>
         </a-layout-content>
-        <a-modal v-model:visible="visible" title="Chi tiết ngân hàng" @ok="handleOk">
+        <a-modal v-model:visible="visible" title="Chi tiết ngân hàng" @ok="handleOk" :footer="null">
             <p>Tên Ngân hàng: <span style="color: red">{{ userAction.bankName }}</span></p>
             <p>Số tài khoản: <span style="color: red;">{{ userAction.bankAccountNumber }}</span></p>
             <p>Chi nhánh: <span style="color: red;">{{ userAction.bankBranch }}</span></p>
@@ -319,6 +328,8 @@ const search = (value) => {
 
 <style scoped>
 .editable-row-operations a {
-    margin-right: 8px;
+    /* margin-right: 8px; */
+    display: block;
+    text-align: center;
 }
 </style>

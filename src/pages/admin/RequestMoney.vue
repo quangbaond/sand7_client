@@ -34,7 +34,7 @@ const columns = [
         dataIndex: 'createAt',
         key: 'createAt',
         customRender: (text) => {
-            return formatDateTime(text)
+            return formatDateTime(text.text)
         }
     },
     {
@@ -46,9 +46,6 @@ const columns = [
         title: 'Tiền thực',
         dataIndex: 'type',
         key: 'type',
-        customRender: (text) => {
-            return text == 'deposit' ? 'Rút' : 'Nạp';
-        }
     },
     {
         title: 'Hành động',
@@ -59,6 +56,7 @@ const editableData = reactive({});
 const edit = key => {
     editableData[key] = cloneDeep(dataSource.value.filter(item => key === item.key)[0]);
 };
+const type = ref('');
 const save = key => {
     Object.assign(dataSource.value.filter(item => key === item.key)[0], editableData[key]);
     console.log(editableData[key]);
@@ -76,6 +74,7 @@ const save = key => {
                     ...editableData[key],
                     username: data.username,
                     status: item.status == 'pending' ? 'Đang chờ' : item.status == 'accept' ? 'Đã chấp nhận' : 'Từ chối',
+                    type: item.type == 'deposit' ? 'Nạp tiền' : 'Rút tiền',
                 }
             }
             return item;
@@ -100,6 +99,7 @@ const cancel = key => {
 //         console.log(err);
 //     });
 // }
+const rangePicker = ref([]);
 
 const pagination = ref({
     current: 1,
@@ -120,6 +120,8 @@ const run = (params) => {
                 key: item._id,
                 username: item.user.username,
                 status: item.status == 'pending' ? 'Đang chờ' : item.status == 'accept' ? 'Đã chấp nhận' : 'Từ chối',
+                type: item.type == 'deposit' ? 'Nạp tiền' : 'Rút tiền',
+
             }
         });
         pagination.value = {
@@ -150,6 +152,32 @@ const onSearch = (value) => {
 onMounted(() => {
     run({ page: 1, limit: 10 })
 });
+const changeType = (value) => {
+    type.value = value;
+    run({
+        page: 1,
+        limit: 10,
+        type: value,
+    });
+}
+const changeRangePicker = (value) => {
+    if (value && value.length > 0) {
+
+
+        run({
+            page: 1,
+            limit: 10,
+            fromDate: value[0],
+            toDate: value[1],
+        });
+    } else {
+        run({
+            page: 1,
+            limit: 10,
+        });
+    }
+
+}
 // watch(dataSource, (newVal) => {
 //     const data = newVal;
 //     dataSource.value = newVal.map((item, index) => {
@@ -165,14 +193,26 @@ onMounted(() => {
 </script>
 <template>
     <a-layout>
-        <Header selectedKeys="1"></Header>
+        <Header :selectedKeys="['5']"></Header>
         <a-layout-content style="padding: 20px 50px">
-            <div :style="{ background: '#fff', padding: '12px', minHeight: 'calc(100vh - 190px)' }">
+            <div :style="{ background: '#fff', padding: '12px', minHeight: 'calc(100vh - 170px)' }">
                 <h3>Quản lý nạp rút</h3>
-                <a-row>
-                    <a-col :span="24">
+                <a-row gutter="10" style="margin: 10px 0;">
+                    <a-col :span="12">
                         <a-input-search v-model:value="searchValue" @search="onSearch"
                             placeholder="Tìm kiếm theo tên người dùng" enter-button />
+                    </a-col>
+                    <!-- // select option type -->
+                    <a-col :span="12">
+                        <a-select v-model:value="type" style="width: 100%" placeholder="Chọn tình trạng"
+                            @change="changeType" allowClear>
+                            <a-select-option value="deposit">Nạp tiền</a-select-option>
+                            <a-select-option value="withdraw">Rút tiền</a-select-option>
+                        </a-select>
+                    </a-col>
+                    <a-col :span="24" style="margin-top: 10px;">
+                        <p>Tìm kiếm theo ngày</p>
+                        <a-range-picker v-model:value="rangePicker" @change="changeRangePicker" />
                     </a-col>
                 </a-row>
                 <a-table :columns="columns" :data-source="dataSource" bordered :pagination="pagination"
@@ -216,7 +256,8 @@ onMounted(() => {
                             <div class="editable-row-operations">
                                 <span v-if="editableData[record.key]">
                                     <a-typography-link @click="save(record.key)">Lưu</a-typography-link>
-                                    <a-popconfirm title="Sure to cancel?" @confirm="cancel(record.key)">
+                                    <a-popconfirm title="Bạn có muốn hủy thao thác?" @confirm="cancel(record.key)"
+                                        ok-text="OK" cancel-text="Tiếp tục">
                                         <a>Hủy</a>
                                     </a-popconfirm>
                                 </span>

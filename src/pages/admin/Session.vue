@@ -8,7 +8,7 @@ import Footer from '../../components/admin/Footer.vue';
     <a-layout>
         <Header></Header>
         <a-layout-content style="padding: 20px 50px">
-            <div :style="{ background: '#fff', padding: '12px', minHeight: 'calc(100vh - 190px)' }">
+            <div :style="{ background: '#fff', padding: '12px', minHeight: 'calc(100vh - 170px)' }">
                 <h3>Session</h3>
             </div>
         </a-layout-content>

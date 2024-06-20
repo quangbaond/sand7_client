@@ -35,6 +35,7 @@ const changeInput = (e) => {
 }
 const onFinish = values => {
     values.amount = Number(values.amount.replace(/\D/g, ""));
+    values.type = 'withdraw';
     console.log(values.amount, user.value.balance);
 
     if (values.amount > user.value.balance) {
@@ -44,7 +45,7 @@ const onFinish = values => {
         });
         return;
     }
-    axios.post('/me/deposit', values).then((res) => {
+    axios.post('/me/withdraw', values).then((res) => {
         layer.msg('Yêu cầu rút tiền thành công.', {
             icon: 1,
             time: 4000

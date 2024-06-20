@@ -17,9 +17,9 @@ onMounted(() => {
 </script>
 <template>
     <a-layout>
-        <Header selectedKeys="2"></Header>
+        <Header :selectedKeys="['2']"></Header>
         <a-layout-content style="padding: 20px 50px">
-            <div :style="{ background: '#fff', padding: '12px', minHeight: 'calc(100vh - 190px)' }">
+            <div :style="{ background: '#fff', padding: '12px', minHeight: 'calc(100vh - 170px)' }">
                 <h3>Danh sách game</h3>
 
                 <div class="list_game" style="margin-top: 10px;">

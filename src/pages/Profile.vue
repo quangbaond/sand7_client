@@ -65,13 +65,13 @@ const logout = () => {
         </div>
 
         <div class="info_description">
-            <a-row gutter="10" style="text-align: center; justify-content: center;">
+            <a-row gutter="5" style="text-align: center; justify-content: center;">
                 <a-col :span="8">
                     <a-space direction="vertical">
                         <a-typography.Title level="5" style="color: #5d636e; display: block; height: 30px;">
                             Số dư tài khoản
                         </a-typography.Title>
-                        <a-typography.Title level="5" style="color: #fff; font-size: 20px;">
+                        <a-typography.Title level="5" style="color: #fff; font-size: 16px;">
                             {{ formattedBalanceUser }}
                         </a-typography.Title>
                     </a-space>
@@ -81,7 +81,7 @@ const logout = () => {
                         <a-typography.Title level="5" style="color: #5d636e; display: block; height: 30px;">
                             Đặt cược hôm nay
                         </a-typography.Title>
-                        <a-typography.Title level="5" style="color: #fff; font-size: 20px;">
+                        <a-typography.Title level="5" style="color: #fff; font-size: 16px;">
                             {{ formattedBetTodayUser }}
                         </a-typography.Title>
                     </a-space>
@@ -91,7 +91,7 @@ const logout = () => {
                         <a-typography.Title level="5" style="color: #5d636e; display: block; height: 30px;">
                             Lãi và lỗ hôm nay
                         </a-typography.Title>
-                        <a-typography.Title level="5" style="color: #fff; font-size: 20px;">
+                        <a-typography.Title level="5" style="color: #fff; font-size: 16px;">
                             {{ formattedWinTodayUser }}
                         </a-typography.Title>
                     </a-space>
@@ -107,7 +107,7 @@ const logout = () => {
                         <span>Nạp tiền</span>
                     </a-space>
                 </a-button>
-                <a-button class="width_draw" @click="router.push('/deposit')">
+                <a-button class="width_draw" @click="router.push('/withdraw')">
                     <a-space>
                         <img :src="iconDeposit" alt=""></img>
                         <span>Rút tiền</span>
@@ -138,7 +138,7 @@ const logout = () => {
                         <a-col :span="12" style="display: flex;">
                             <router-link to="/profile/transaction?type=plus" style="display: flex;">
                                 <img :src="iconDeposit" alt="" style="width: 40px; padding-right: 10px;">
-                                <a-typography.Text style="color: #fff; font-size: 20px;">
+                                <a-typography.Text style="color: #fff; font-size: 16px;">
                                     Lịch sử nạp
                                 </a-typography.Text>
                             </router-link>
@@ -166,7 +166,7 @@ const logout = () => {
                         <a-col :span="12" style="display: flex;">
                             <router-link to="/profile/transaction?type=minus" style="display: flex;">
                                 <img :src="iconDeposit" alt="" style="width: 40px; padding-right: 10px;">
-                                <a-typography.Text style="color: #fff; font-size: 20px;">
+                                <a-typography.Text style="color: #fff; font-size: 16px;">
                                     Lịch sử rút
                                 </a-typography.Text>
                             </router-link>
@@ -181,7 +181,7 @@ const logout = () => {
                         <a-col :span="12" style="display: flex;">
                             <router-link to="/profile/historybet" style="display: flex;">
                                 <img :src="iconDeposit" alt="" style="width: 40px; padding-right: 10px;">
-                                <a-typography.Text style="color: #fff; font-size: 20px;">
+                                <a-typography.Text style="color: #fff; font-size: 16px;">
                                     Lịch sử đặt cược
                                 </a-typography.Text>
                             </router-link>
@@ -196,7 +196,7 @@ const logout = () => {
                         <a-col :span="12" style="display: flex;">
                             <router-link to="/profile/info" style="display: flex;">
                                 <img :src="iconDeposit" alt="" style="width: 40px; padding-right: 10px;">
-                                <a-typography.Text style="color: #fff; font-size: 20px;">
+                                <a-typography.Text style="color: #fff; font-size: 16px;">
                                     Trung tâm cá nhân
                                 </a-typography.Text>
                             </router-link>
@@ -215,7 +215,7 @@ const logout = () => {
                         <a-col :span="12" style="display: flex;">
                             <a @click="logout" style="display: flex;">
                                 <LogoutOutlined style="color: #fff; font-size: 23px; font-weight: bold;" />
-                                <a-typography.Text style="color: #fff; font-size: 20px; padding-left: 15px">
+                                <a-typography.Text style="color: #fff; font-size: 16px; padding-left: 15px">
                                     Đăng xuất
                                 </a-typography.Text>
                             </a>

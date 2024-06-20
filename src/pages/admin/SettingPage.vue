@@ -37,9 +37,9 @@ const onFinish = async () => {
 </script>
 <template>
     <a-layout>
-        <Header selectedKeys="2"></Header>
+        <Header :selectedKeys="['4']"></Header>
         <a-layout-content style="padding: 20px 50px">
-            <div :style="{ background: '#fff', padding: '12px', minHeight: 'calc(100vh - 190px)' }">
+            <div :style="{ background: '#fff', padding: '12px', minHeight: 'calc(100vh - 170px)' }">
                 <h3>Cài đặt</h3>
                 <a-select name="value" v-if="settingGame" v-model:value="settingGame.value" style="width: 100%">
                     <a-select-option value="1.98">1.98</a-select-option>

@@ -105,13 +105,13 @@ const router = useRouter();
                                 Nạp tiền
                             </a-typography-text>
                         </a-space>
-                        <a-space align="center" direction="vertical">
+                        <a-space align="center" direction="vertical" @click="router.push('/withdraw')">
                             <img :src="iconWithdraw" alt="" style="width: 30px">
                             <a-typography-text style="display: block; text-align: center; font-size: 10px;">
                                 Rút tiền
                             </a-typography-text>
                         </a-space>
-                        <a-space align="center" direction="vertical">
+                        <a-space align="center" direction="vertical" @click="router.push('/profile')">
                             <img :src="iconAccount" alt="" style="width: 30px">
                             <a-typography-text style="display: block; text-align: center; font-size: 10px;">
                                 Tài khoản

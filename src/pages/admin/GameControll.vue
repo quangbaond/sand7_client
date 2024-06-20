@@ -96,8 +96,9 @@ const dataSource2 = ref([]);
 const run = async (params = {}) => {
     const data = {
         ...params,
-        gameCode: gameCode
+        gameCode: gameCode,
     }
+    console.log(data);
     const res = await axios.get(`/history/get/${gameCode}`, { params: data });
     const dataUpdate = updateData(res.docs);
     dataSource2.value = cloneDeep(dataUpdate);
@@ -141,7 +142,7 @@ const columns = [
         dataIndex: 'createAt',
         key: 'createAt',
         customRender: (text) => {
-            return formatDateTime(text)
+            return formatDateTime(text.text)
         }
     },
 ]
@@ -176,7 +177,7 @@ const columns2 = [
         dataIndex: 'createAt',
         key: 'createAt',
         customRender: (text) => {
-            return formatDateTime(text)
+            return formatDateTime(text.text)
         }
     },
 ]
@@ -250,7 +251,7 @@ const onSearch2 = (value) => {
 </script>
 <template>
     <a-layout>
-        <Header selectedKeys="2"></Header>
+        <Header :selectedKeys="[2]"></Header>
         <a-layout-content style="padding: 20px 50px">
 
             <div :style="{ background: '#fff', padding: '12px', minHeight: '100vh' }">
@@ -272,8 +273,7 @@ const onSearch2 = (value) => {
                         </a-form>
                     </div>
                     <div id="onBet">
-                        <a-tabs @change="changeTab" :tab-position="mode" :style="{ height: '200px' }"
-                            @tabScroll="callback">
+                        <a-tabs @change="changeTab" :tab-position="mode" @tabScroll="callback">
                             <a-tab-pane key="1" tab="Hiện tại">
                                 <a-table :columns="columns" :data-source="dataSource" bordered>
                                 </a-table>
@@ -301,7 +301,7 @@ const onSearch2 = (value) => {
                 </div>
             </div>
         </a-layout-content>
-        <!-- <Footer></Footer> -->
+        <Footer></Footer>
     </a-layout>
 </template>
 

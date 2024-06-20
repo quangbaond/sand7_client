@@ -21,8 +21,8 @@ const router = createRouter({
             meta: { requiresAuth: false },
         },
         {
-            path: "/desposit",
-            component: () => import("./pages/Deposit.vue"),
+            path: "/withdraw",
+            component: () => import("./pages/WithDraw.vue"),
             meta: { requiresAuth: true },
         },
         {
@@ -79,6 +79,11 @@ const router = createRouter({
         {
             path: "/admin/request-money",
             component: () => import("./pages/admin/RequestMoney.vue"),
+            meta: { requiresAuth: true, isAdmin: true },
+        },
+        {
+            path: "/admin/profile",
+            component: () => import("./pages/admin/Profile.vue"),
             meta: { requiresAuth: true, isAdmin: true },
         },
         // {
