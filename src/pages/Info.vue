@@ -1,7 +1,7 @@
 <script setup>
 import { getStorage } from '@/common'
 import { onMounted, watch } from 'vue'
-import { formatCurrency, formatDateTime } from '../common';
+import { formatCurrency, formatDateTime, cskh } from '../common';
 import iconDeposit from '@/assets/images/icons/profile/deposit.svg'
 import { CaretRightOutlined, HomeOutlined } from '@ant-design/icons-vue';
 import { ref } from 'vue';
@@ -89,7 +89,7 @@ const updateInfo = (field, value) => {
         </div>
 
         <div class="action_money">
-            <a-space style="width: 100%; display: flex; justify-content: space-around;">
+            <a-space style="width: 100%; display: flex; justify-content: space-around;" @click="cskh">
                 <a-button type="primary">
                     <a-space>
                         <img :src="iconDeposit" alt=""></img>

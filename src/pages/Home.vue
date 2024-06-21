@@ -20,10 +20,9 @@ import { useRouter } from 'vue-router'
 import axios from '@/common/axios'
 import { layer } from "@layui/layer-vue"
 
-import { getStorage, formatCurrency, baotri } from '@/common'
+import { getStorage, formatCurrency, baotri, cskh } from '@/common'
 import { listGame } from '../common/constants'
 import Header from '../components/Header.vue'
-
 const slider = [
     {
         id: 1,
@@ -167,7 +166,7 @@ const router = useRouter();
                         Sảnh xổ số
                     </a-typography-text>
                 </a-space>
-                <a-space direction="vertical">
+                <a-space direction="vertical" @click="cskh">
                     <img :src="iconCSKH" alt="" style="max-width: 20px;">
                     <a-typography-text style="color: #fff; font-size: 14px; display: block;">
                         CSKH

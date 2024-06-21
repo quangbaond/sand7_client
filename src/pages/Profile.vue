@@ -1,7 +1,7 @@
 <script setup>
 import { getStorage } from '@/common'
 import { onMounted, watch } from 'vue'
-import { formatCurrency } from '../common';
+import { formatCurrency, cskh } from '../common';
 import iconDeposit from '@/assets/images/icons/profile/deposit.svg'
 import { CaretRightOutlined, HomeOutlined, LogoutOutlined } from '@ant-design/icons-vue';
 import { ref } from 'vue';
@@ -100,7 +100,7 @@ const logout = () => {
         </div>
 
         <div class="action_money">
-            <a-space style="width: 100%; display: flex; justify-content: space-around;">
+            <a-space style="width: 100%; display: flex; justify-content: space-around;" @click="cskh">
                 <a-button type="primary">
                     <a-space>
                         <img :src="iconDeposit" alt=""></img>
