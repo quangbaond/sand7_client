@@ -100,8 +100,8 @@ const logout = () => {
         </div>
 
         <div class="action_money">
-            <a-space style="width: 100%; display: flex; justify-content: space-around;" @click="cskh">
-                <a-button type="primary">
+            <a-space style="width: 100%; display: flex; justify-content: space-around;">
+                <a-button type="primary" @click="cskh">
                     <a-space>
                         <img :src="iconDeposit" alt=""></img>
                         <span>Nạp tiền</span>
