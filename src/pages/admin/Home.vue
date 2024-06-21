@@ -263,7 +263,7 @@ const onFinishPassword = values => {
                     </a-form-item>
                 </a-form>
                 <a-table @change="handelChangeTable" :columns="columns" :data-source="dataSource" bordered
-                    :pagination="pagination" :scroll="{ x: 1500, y: 300 }">
+                    :pagination="pagination" :scroll="{ x: 1500, y: 700 }">
                     <template #bodyCell="{ column, text, record }">
                         <template v-if="['balance', 'phone', 'email'].includes(column.dataIndex)">
                             <div>
