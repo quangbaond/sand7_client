@@ -1,9 +1,22 @@
 <script setup>
+import GoogleTranslateSelect from '@google-translate-select/vue3';
+import Logo from '@/assets/images/logo.png';
+const handleGoogleTranslateSelect = (language) => {
+    console.log(language)
+}
 </script>
 
 <template>
-    <header>
-        <h1>Vue 3 + Vite</h1>
-        <p>Click on the Vite and Vue logos to learn more</p>
-    </header>
+    <a-row gutter="10" style="display: flex; justify-content: space-between;">
+        <a-col :span="12">
+            <img :src="Logo" alt="" style="max-width: 100%;">
+
+        </a-col>
+        <a-col :span="12"
+            style="display: flex; align-self: center;color: #fff; text-align: right; justify-content: end;">
+            <GoogleTranslateSelect default-language-code="vi" default-page-language-code="vi"
+                :fetch-browser-language="false" trigger="click" @select="handleGoogleTranslateSelect" />
+        </a-col>
+    </a-row>
+
 </template>

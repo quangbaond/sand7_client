@@ -218,7 +218,6 @@ const changePagination = (page) => {
                 <p>Số đánh: {{ data.betInUserText }}</p>
                 <p>Số tiền cược: {{ formatCurrency(data.amount) }}</p>
                 <p>
-                    <!-- <span v-for="result in data.resultSession.split(',')" :key="result">{{ result }}</span> -->
                     <a-row gutter="10" style="justify-content: center; align-items: center; align-self: center;">
                         Kết quả:
                         <a-col :span="4" v-for="betN in data.betData.betData" :key="betN">

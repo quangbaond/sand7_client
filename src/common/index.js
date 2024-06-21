@@ -1,3 +1,4 @@
+import { layer } from "@layui/layer-vue";
 import moment from "moment";
 // save data to location storage by key
 export const setStorage = (key, data) => {
@@ -31,4 +32,7 @@ export const formatDateTime = (date) => {
 export const formatCurrency = (value) => {
     if (!value) return 0;
     return value.toLocaleString("en-US", { style: "currency", currency: "USD" });
+}
+export const baotri = () => {
+    layer.msg("Chức năng đang được bảo trì", { icon: 5 });
 }

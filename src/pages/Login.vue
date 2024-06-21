@@ -5,7 +5,8 @@ import { layer } from "@layui/layer-vue";
 import { setStorage } from '@/common';
 import { useRouter } from 'vue-router'
 import { UserOutlined, LockOutlined } from '@ant-design/icons-vue';
-
+import Header from '../components/Header.vue';
+import Logo from '@/assets/images/logo.png';
 
 const formState = reactive({
     username: '',
@@ -58,46 +59,58 @@ onMounted(() => {
 </script>
 
 <template>
-    <div id="login_wrap">
-        <div id="login">
-            <a-form :model="formState" name="basic" autocomplete="off" @finish="onFinish" @finishFailed="onFinishFailed"
-                style="width: 100%">
-                <a-form-item name="username" :rules="[{ required: true, message: 'Tên đăng nhập không được để trống' },
-                { min: 6, message: 'Tên đăng nhập phải có ít nhất 6 ký tự' },
-                { max: 20, message: 'Tên đăng nhập không được quá 20 ký tự' },
-                { pattern: /^[a-zA-Z0-9]+$/, message: 'Tên đăng nhập chỉ chứa ký tự và số' }]">
-                    <a-input v-model:value="formState.username" size="large" placeholder="Tên đăng nhập">
-                        <template #prefix>
-                            <user-outlined />
-                        </template>
-                    </a-input>
-                </a-form-item>
-                <a-form-item name="password" :rules="[
-                    { required: true, message: 'Mật khẩu không được để trống' },
-                    { min: 6, message: 'Mật khẩu phải có ít nhất 6 ký tự' },
-                ]">
-                    <a-input-password v-model:value="formState.password" size="large" placeholder="Mật khẩu"
-                        autocomplete="new-password">
-                        <template #prefix>
-                            <LockOutlined />
-                        </template>
-                    </a-input-password>
-                </a-form-item>
-                <a-form-item>
-                    <a-button :loading="loadingBtn" :disabled="disbaledBtn" type="primary" html-type="submit"
-                        style="width: 100%" size="large">
-                        Đăng nhập
-                    </a-button>
-                </a-form-item>
-                <a-space align="center">
-                    <a-button type="link" class="link" @click="router.push('/register')">Đăng ký</a-button>
-                    <a-button type="link" class="link" @click="router.push('/register')">CSKH</a-button>
-                    <a-button type="link" class="link" @click="router.push('/forgot-password')">Quên mật
-                        khẩu</a-button>
-                </a-space>
-            </a-form>
+    <!-- <Header /> -->
+    <div id="wrap">
+        <div style="margin-top: 10px;">
+            <Header />
+
+        </div>
+
+        <div id="login_wrap">
+            <div id="login">
+
+                <a-form :model="formState" name="basic" autocomplete="off" @finish="onFinish"
+                    @finishFailed="onFinishFailed" style="width: 100%">
+                    <img :src="Logo" alt="" style="max-width: 100%;">
+
+                    <a-form-item name="username" :rules="[{ required: true, message: 'Tên đăng nhập không được để trống' },
+                    { min: 6, message: 'Tên đăng nhập phải có ít nhất 6 ký tự' },
+                    { max: 20, message: 'Tên đăng nhập không được quá 20 ký tự' },
+                    { pattern: /^[a-zA-Z0-9]+$/, message: 'Tên đăng nhập chỉ chứa ký tự và số' }]">
+                        <a-input v-model:value="formState.username" size="large" placeholder="Tên đăng nhập">
+                            <template #prefix>
+                                <user-outlined />
+                            </template>
+                        </a-input>
+                    </a-form-item>
+                    <a-form-item name="password" :rules="[
+                        { required: true, message: 'Mật khẩu không được để trống' },
+                        { min: 6, message: 'Mật khẩu phải có ít nhất 6 ký tự' },
+                    ]">
+                        <a-input-password v-model:value="formState.password" size="large" placeholder="Mật khẩu"
+                            autocomplete="new-password">
+                            <template #prefix>
+                                <LockOutlined />
+                            </template>
+                        </a-input-password>
+                    </a-form-item>
+                    <a-form-item>
+                        <a-button :loading="loadingBtn" :disabled="disbaledBtn" type="primary" html-type="submit"
+                            style="width: 100%" size="large">
+                            Đăng nhập
+                        </a-button>
+                    </a-form-item>
+                    <a-space align="center">
+                        <a-button type="link" class="link" @click="router.push('/register')">Đăng ký</a-button>
+                        <a-button type="link" class="link" @click="router.push('/register')">CSKH</a-button>
+                        <!-- <a-button type="link" class="link" @click="router.push('/forgot-password')">Quên mật
+                        khẩu</a-button> -->
+                    </a-space>
+                </a-form>
+            </div>
         </div>
     </div>
+
 </template>
 
 <style>
@@ -105,12 +118,18 @@ onMounted(() => {
     display: flex;
     justify-content: center;
     align-items: center;
+    align-self: center;
+}
+
+#wrap {
     height: 100vh;
-    /* background-color: #f0f0f0; */
     background-image: url(@/assets/images/bg_login.PNG);
     background-size: cover;
     background-position: center;
     width: 100%;
+    display: flex;
+    justify-content: space-between;
+    flex-direction: column;
 }
 
 #login {

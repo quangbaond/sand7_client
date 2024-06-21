@@ -20,8 +20,9 @@ import { useRouter } from 'vue-router'
 import axios from '@/common/axios'
 import { layer } from "@layui/layer-vue"
 
-import { getStorage, formatCurrency } from '@/common'
+import { getStorage, formatCurrency, baotri } from '@/common'
 import { listGame } from '../common/constants'
+import Header from '../components/Header.vue'
 
 const slider = [
     {
@@ -73,8 +74,10 @@ const router = useRouter();
 
 <template>
     <div class="home">
+        <Header />
+
         <div class="slider">
-            <carousel :items-to-show="1">
+            <carousel :items-to-show="1" :autoplay="1500">
                 <slide v-for="slide in slider" :key="slide">
                     <div class="carousel__item">
                         <img :src="slide.image" style="max-width: 100%;" />
@@ -158,12 +161,12 @@ const router = useRouter();
                         Lịch sử cược
                     </a-typography-text>
                 </a-space>
-                <!-- <a-space direction="vertical">
+                <a-space direction="vertical" @click="baotri">
                     <img :src="iconLottery" alt="" style="max-width: 20px;">
                     <a-typography-text style="color: #fff; font-size: 14px; display: block;">
                         Sảnh xổ số
                     </a-typography-text>
-                </a-space> -->
+                </a-space>
                 <a-space direction="vertical">
                     <img :src="iconCSKH" alt="" style="max-width: 20px;">
                     <a-typography-text style="color: #fff; font-size: 14px; display: block;">
