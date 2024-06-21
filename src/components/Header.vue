@@ -9,7 +9,7 @@ const handleGoogleTranslateSelect = (language) => {
 <template>
     <a-row gutter="10" style="display: flex; justify-content: space-between;">
         <a-col :span="12">
-            <img :src="Logo" alt="" style="max-width: 100%;">
+            <img :src="Logo" alt="" style="max-width: 100%; width: 150px;">
 
         </a-col>
         <a-col :span="12"

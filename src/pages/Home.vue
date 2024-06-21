@@ -77,7 +77,7 @@ const router = useRouter();
         <Header />
 
         <div class="slider">
-            <carousel :items-to-show="1" :autoplay="1500">
+            <carousel :items-to-show="1" :autoplay="1500" :wrap-around="true">
                 <slide v-for="slide in slider" :key="slide">
                     <div class="carousel__item">
                         <img :src="slide.image" style="max-width: 100%;" />
