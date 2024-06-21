@@ -26,7 +26,11 @@ onMounted(() => {
         console.log(err);
         router.push('/login');
     });
-    axios.get(`/me/get-balance-fluctuation/${user.value?._id}?type=${type}`).then((res) => {
+    axios.get(`/me/get-balance-fluctuation`, {
+        params: {
+            type: type
+        }
+    }).then((res) => {
         balanceFluctuations.value = res.docs;
     }).catch((err) => {
         console.log(err);

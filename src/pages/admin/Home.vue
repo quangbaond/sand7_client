@@ -141,7 +141,6 @@ onMounted(() => {
         console.log(err);
     });
 });
-const visible = ref(false);
 const userAction = ref({
     bankName: '',
     bankAccountNumber: '',
@@ -149,6 +148,8 @@ const userAction = ref({
     bankAccountName: ''
 
 });
+const visible = ref(false);
+const visibleChangePass = ref(false);
 const showModal = (record) => {
     console.log(record);
     userAction.value = record;
@@ -157,6 +158,15 @@ const showModal = (record) => {
 const handleOk = e => {
     console.log(e);
     visible.value = false;
+};
+const showModalChangePass = (record) => {
+    console.log(record);
+    userAction.value = record;
+    visibleChangePass.value = true;
+};
+const handleOkChangePass = e => {
+    console.log(e);
+    visibleChangePass.value = false;
 };
 const run = (params) => {
     loading.value = true;
@@ -194,6 +204,11 @@ const run = (params) => {
         loading.value = false;
     });
 }
+
+const formStatePassword = reactive({
+    password: '',
+    confirmPassword: ''
+});
 const handelChangeTable = ({ params }) => {
     run(params);
 
@@ -214,6 +229,26 @@ const search = (value) => {
         search: value
     });
 }
+const onFinishPassword = values => {
+    console.log('Success:', values);
+    axios.put(`/users/change-password/${userAction.value._id}`, {
+        password: formStatePassword.password,
+        confirmPassword: formStatePassword.confirmPassword
+    }).then((res) => {
+        console.log(res);
+        layer.msg('Thay đổi mật khẩu thành công', {
+            icon: 1,
+            time: 3000,
+        });
+        visibleChangePass.value = false;
+    }).catch((err) => {
+        console.log(err);
+        layer.msg(err.response.data.message, {
+            icon: 2,
+            time: 3000,
+        });
+    });
+};
 
 </script>
 <template>
@@ -278,6 +313,9 @@ const search = (value) => {
                                         <a href="#" style="color: red;">Xóa</a>
                                     </a-popconfirm>
                                     <a @click="showModal(record)" style="color: green">Ngân hàng</a>
+                                    <a @click="showModalChangePass(record)" style="color: yellowgreen">Thay đổi mật
+                                        khẩu</a>
+
                                 </span>
                             </div>
                         </template>
@@ -290,6 +328,33 @@ const search = (value) => {
             <p>Số tài khoản: <span style="color: red;">{{ userAction.bankAccountNumber }}</span></p>
             <p>Chi nhánh: <span style="color: red;">{{ userAction.bankBranch }}</span></p>
             <p>Tên tài khoản: <span style="color: red;">{{ userAction.bankAccountName }}</span></p>
+        </a-modal>
+        <a-modal v-model:visible="visibleChangePass" title="Thay đổi mật khẩu" @ok="handleOk" :footer="null">
+            <a-form layout="vertical" :model="formStatePassword" autocomplete="off" @finish="onFinishPassword">
+                <a-form-item label="Mật khẩu mới" name="password" :rules="[
+                    { required: true, message: 'Vui lòng nhập mật khẩu' },
+                    { min: 6, message: 'Mật khẩu phải lớn hơn 6 ký tự' }
+                ]">
+                    <a-input-password v-model:value="formStatePassword.password" />
+                </a-form-item>
+                <a-form-item label="Nhập lại mật khẩu" name="confirmPassword" :rules="[
+                    { required: true, message: 'Vui lòng nhập lại mật khẩu' },
+                    { min: 6, message: 'Mật khẩu phải lớn hơn 6 ký tự' },
+                    {
+                        validator: (rule, value, callback) => {
+                            if (value !== formStatePassword.password) {
+                                callback('Mật khẩu không khớp');
+                            }
+                            callback()
+                        }
+                    }
+                ]">
+                    <a-input-password v-model:value="formStatePassword.confirmPassword" />
+                </a-form-item>
+                <a-form-item>
+                    <a-button type="primary" html-type="submit">Lưu</a-button>
+                </a-form-item>
+            </a-form>
         </a-modal>
         <Footer></Footer>
     </a-layout>

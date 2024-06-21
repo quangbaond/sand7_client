@@ -23,7 +23,10 @@ onMounted(() => {
     // console.log(user)
     axios.get('/me/profile').then((res) => {
         user.value = res.user;
-        totalOnbet.value = res.totalOnbet;
+        totalOnbet.value = res.totalOnbet || {
+            totalOnbet: 0,
+            totalWin: 0
+        };
     }).catch((err) => {
         console.log(err);
         router.push('/login');

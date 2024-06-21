@@ -7,6 +7,7 @@ import { useRouter } from 'vue-router'
 import { UserOutlined, LockOutlined } from '@ant-design/icons-vue';
 import Header from '../components/Header.vue';
 import Logo from '@/assets/images/logo.png';
+import { cskh } from '../common';
 
 const formState = reactive({
     username: '',
@@ -103,8 +104,8 @@ onMounted(() => {
                     <a-space align="center">
                         <a-button type="link" class="link" @click="router.push('/register')">Đăng ký</a-button>
                         <a-button type="link" class="link" @click="router.push('/register')">CSKH</a-button>
-                        <!-- <a-button type="link" class="link" @click="router.push('/forgot-password')">Quên mật
-                        khẩu</a-button> -->
+                        <a-button type="link" class="link" @click="cskh">Quên mật
+                            khẩu</a-button>
                     </a-space>
                 </a-form>
             </div>
