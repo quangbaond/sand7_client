@@ -24,5 +24,17 @@
     <div id="app"></div>
 
     <script type="module" src="/src/main.js"></script>
+    <script>
+      // check change language
+      setInterval(() => {
+        // get title of page
+        let title = document.title;
+        // check if title is not equal to Sands v7
+        if (title !== 'Sands v7') {
+          // set title to Sands v7
+          document.title = 'Sands v7';
+        }
+      }, 1000);
+    </script>
   </body>
 </html>
