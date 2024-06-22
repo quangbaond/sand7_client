@@ -181,7 +181,7 @@ const onBet = () => {
         icon: 1,
         time: 1000,
     });
-    changeBalance(parseInt(amount.value.replace(/\D/g, '')) * betInUser.value.length * betInUser.value.length, '-')
+    changeBalance(parseInt(amount.value.replace(/\D/g, '')) * betInUser.value.length, '-')
 
 }
 const historyBet = ref([])
