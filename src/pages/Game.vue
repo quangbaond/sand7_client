@@ -175,12 +175,13 @@ const onBet = () => {
         code: codeInParam,
         username: user.value.username
     }
+    console.log(data);
     socket.emit('onBet', data);
     layer.msg('Đặt cược thành công', {
         icon: 1,
         time: 1000,
     });
-    changeBalance(amount.value * betInUser.value.length, '-')
+    changeBalance(parseInt(amount.value.replace(/\D/g, '')) * betInUser.value.length * betInUser.value.length, '-')
 
 }
 const historyBet = ref([])
