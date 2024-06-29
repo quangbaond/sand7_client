@@ -34,7 +34,6 @@ onMounted(() => {
                             </a-typography-text>
                             <img :src="game.image" alt="" style="width: 50px;">
                         </div>
-
                     </a-space>
                 </div>
             </div>

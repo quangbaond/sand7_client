@@ -54,6 +54,16 @@ onMounted(() => {
             time: 1000,
         });
     })
+
+    socket.on(`betDataResponse-${user.value._id}`, (data) => {
+        console.log(data);
+        // user.value.balance = data.balance
+        changeBalance(data.balance, '-')
+        layer.msg('Đặt cược thành công', {
+            icon: 1,
+            time: 1000,
+        });
+    })
 })
 
 const amount = ref('')
@@ -69,11 +79,7 @@ const resetBet = () => {
 
 const changeBalance = (amount, calculation = '+') => {
     // tạo hiệu ứng thay đổi số dư
-    if (calculation === '+') {
-        user.value.balance += amount
-    } else {
-        user.value.balance -= amount
-    }
+    user.value.balance = calculation === '+' ? user.value.balance = amount : user.value.balance = amount
     formattedBalanceUser.value = formatCurrency(user.value.balance)
 
 }
@@ -127,7 +133,6 @@ watch(() => user.value, (value) => {
     formattedBalanceUser.value = formatCurrency(value.balance)
 })
 
-
 const onBetItem = (id, value) => {
     if (betInUser.value.findIndex(item => item.id === id && item.value === value) > -1) {
         const index = betInUser.value.findIndex(item => item.id === id && item.value === value)
@@ -160,6 +165,24 @@ const onBet = () => {
         return
     }
 
+    if (setting.value.value === '1.98') {
+        // số tiền đặt cược + 5% > số dư
+        if (parseInt(amount.value.replace(/\D/g, '')) * betInUser.value.length * 1.05 > user.value.balance) {
+            layer.msg('Số dư không đủ', {
+                icon: 2,
+                time: 1000,
+            });
+            return
+        }
+    } else {
+        if (parseInt(amount.value.replace(/\D/g, '')) * betInUser.value.length > user.value.balance) {
+            layer.msg('Số dư không đủ', {
+                icon: 2,
+                time: 1000,
+            });
+            return
+        }
+    }
     if (parseInt(amount.value.replace(/\D/g, '')) * betInUser.value.length > user.value.balance) {
         layer.msg('Số dư không đủ', {
             icon: 2,
@@ -175,13 +198,8 @@ const onBet = () => {
         code: codeInParam,
         username: user.value.username
     }
-    console.log(data);
     socket.emit('onBet', data);
-    layer.msg('Đặt cược thành công', {
-        icon: 1,
-        time: 1000,
-    });
-    changeBalance(parseInt(amount.value.replace(/\D/g, '')) * betInUser.value.length, '-')
+    // changeBalance(parseInt(amount.value.replace(/\D/g, '')) * betInUser.value.length, '-')
 
 }
 const historyBet = ref([])
