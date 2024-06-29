@@ -161,24 +161,6 @@ const onBet = () => {
         return
     }
 
-    if (setting.value.value === '1.98') {
-        // số tiền đặt cược + 5% > số dư
-        if (amount.value * betInUser.value.length * 1.05 > user.value.balance) {
-            layer.msg('Số dư không đủ', {
-                icon: 2,
-                time: 1000,
-            });
-            return
-        }
-    } else {
-        if (amount.value * betInUser.value.length > user.value.balance) {
-            layer.msg('Số dư không đủ', {
-                icon: 2,
-                time: 1000,
-            });
-            return
-        }
-    }
     if (amount.value * betInUser.value.length > user.value.balance) {
         layer.msg('Số dư không đủ', {
             icon: 2,
