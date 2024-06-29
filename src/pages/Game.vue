@@ -66,7 +66,7 @@ onMounted(() => {
     })
 })
 
-const amount = ref('')
+const amount = ref(0)
 const formatNumber = () => {
     amount.value = amount.value.replace(/\D/g, '').replace(/\B(?=(\d{3})+(?!\d))/g, ',')
 }
@@ -108,13 +108,9 @@ const showResult = (on = true) => {
 
 const betInUser = ref([])
 // watch amout change
-watch(() => amount.value, (value) => {
-    if (value === '') {
-        amount.value = ''
-    } else {
-        amount.value = value.replace(/\D/g, '').replace(/\B(?=(\d{3})+(?!\d))/g, '.')
-    }
-})
+// watch(() => amount.value, (value) => {
+
+// })
 watch(() => betDataOnServer.value, (value) => {
     if (value) {
         if (value.timeRemain === '00:00:00') {
@@ -143,9 +139,9 @@ const onBetItem = (id, value) => {
 }
 const onAmount = (value) => {
     if (value === 'all') {
-        amount.value = user.value.balance.toString()
+        amount.value = user.value.balance
     } else {
-        amount.value = value.toString()
+        amount.value += value
     }
 }
 
@@ -689,7 +685,7 @@ watch(() => visible.value, (value) => {
         <div class="onbet">
             <a-row gutter="10" style="justify-content: space-around;">
                 <a-col :span="12" style=" display: flex;">
-                    <a-input v-model:value="amount" placeholder="Nhập số lượng" @change="formatNumber"
+                    <a-input-number v-model:value="amount" placeholder="Nhập số lượng" @change="formatNumber"
                         style="width: 100%;" />
                 </a-col>
                 <a-col :span="12" style=" display: flex; justify-content: space-around;">
