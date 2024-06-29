@@ -163,7 +163,7 @@ const onBet = () => {
 
     if (setting.value.value === '1.98') {
         // số tiền đặt cược + 5% > số dư
-        if (parseInt(amount.value.replace(/\D/g, '')) * betInUser.value.length * 1.05 > user.value.balance) {
+        if (amount.value * betInUser.value.length * 1.05 > user.value.balance) {
             layer.msg('Số dư không đủ', {
                 icon: 2,
                 time: 1000,
@@ -171,7 +171,7 @@ const onBet = () => {
             return
         }
     } else {
-        if (parseInt(amount.value.replace(/\D/g, '')) * betInUser.value.length > user.value.balance) {
+        if (amount.value * betInUser.value.length > user.value.balance) {
             layer.msg('Số dư không đủ', {
                 icon: 2,
                 time: 1000,
@@ -179,7 +179,7 @@ const onBet = () => {
             return
         }
     }
-    if (parseInt(amount.value.replace(/\D/g, '')) * betInUser.value.length > user.value.balance) {
+    if (amount.value * betInUser.value.length > user.value.balance) {
         layer.msg('Số dư không đủ', {
             icon: 2,
             time: 1000,
@@ -189,7 +189,7 @@ const onBet = () => {
     const data = {
         betInUser: betInUser.value,
         betDataID: betDataOnServer.value._id,
-        amount: parseInt(amount.value.replace(/\D/g, '')) * betInUser.value.length,
+        amount: amount.value * betInUser.value.length,
         userID: user.value._id,
         code: codeInParam,
         username: user.value.username
