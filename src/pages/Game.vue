@@ -40,7 +40,7 @@ onMounted(() => {
         betDataOnServer.value = dataBet
     })
 
-    socket.on(`win-${user.value._id}-sx5d`, (data) => {
+    socket.on(`win-${user.value._id}-${codeInParam}`, (data) => {
         changeBalance(data.prize, '+')
         layer.msg('Chúc mừng bạn đã trúng cược, ' + '+' + formatCurrency(data.prize), {
             icon: 1,
@@ -48,7 +48,7 @@ onMounted(() => {
         });
     })
 
-    socket.on(`lose-${user.value._id}-sx5d`, (data) => {
+    socket.on(`lose-${user.value._id}-${codeInParam}`, (data) => {
         layer.msg('Chúc bạn may mắn lần sau', {
             icon: 2,
             time: 1000,
