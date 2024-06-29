@@ -57,6 +57,14 @@ const columns = [
         }
     },
     {
+        title: 'Tiền lãi',
+        dataIndex: 'interest',
+        key: 'interest',
+        customRender: (text) => {
+            return formatCurrency(text.text);
+        }
+    },
+    {
         title: 'Trạng thái',
         dataIndex: 'status',
         key: 'status',
@@ -92,7 +100,10 @@ const edit = key => {
 const save = key => {
     Object.assign(dataSource.value.filter(item => key === item.key)[0], editableData[key]);
     console.log(editableData[key]);
-    axios.put(`/users/${key}`, editableData[key]).then((res) => {
+    const data = cloneDeep(editableData[key]);
+    data.balance = data.balance.replace(/\D/g, '');
+
+    axios.put(`/users/${key}`, data).then((res) => {
         console.log(res);
     }).catch((err) => {
         console.log(err);
@@ -123,9 +134,8 @@ onMounted(() => {
             return {
                 ...item,
                 key: item._id,
-                status: item.status === 'active' ? 'Kích hoạt' : 'Khóa',
                 balance: formatCurrency(item.balance),
-                role: item.role === 'admin' ? 'Admin' : 'Người dùng',
+                interest: item.historyBet.reduce((acc, item) => acc + item.win, 0)
             }
         });
         pagination.value = {
@@ -184,9 +194,8 @@ const run = (params) => {
             return {
                 ...item,
                 key: item._id,
-                status: item.status === 'active' ? 'Kích hoạt' : 'Khóa',
                 balance: formatCurrency(item.balance),
-                role: item.role === 'admin' ? 'Admin' : 'Người dùng',
+                interest: item.historyBet.reduce((acc, item) => acc + item.win, 0)
             }
         });
         pagination.value = {
