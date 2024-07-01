@@ -135,7 +135,7 @@ onMounted(() => {
                 ...item,
                 key: item._id,
                 balance: formatCurrency(item.balance),
-                interest: item.historyBet.reduce((acc, item) => acc + item.win, 0)
+                interest: item.historyBet.reduce((acc, item) => acc + item.interest, 0)
             }
         });
         pagination.value = {
@@ -195,7 +195,7 @@ const run = (params) => {
                 ...item,
                 key: item._id,
                 balance: formatCurrency(item.balance),
-                interest: item.historyBet.reduce((acc, item) => acc + item.win, 0)
+                interest: item.historyBet.reduce((acc, item) => acc + item.interest, 0)
             }
         });
         pagination.value = {
