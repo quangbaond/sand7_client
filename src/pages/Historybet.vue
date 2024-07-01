@@ -230,7 +230,10 @@ const changePagination = (page) => {
                     </a-row>
                 </p>
                 <p>Thời gian: {{ formatDateTime(data.betData.timeEnd) }}</p>
-                <p>Số tiền thắng cược: {{ formatCurrency(data.win) }}</p>
+                <p>Số tiền thắng cược:
+                    <span style="color: red" v-if="data.interest <= 0">{{ formatCurrency(data.interest) }}</span>
+                    <span style="color: green" v-else>{{ formatCurrency(data.interest) }}</span>
+                </p>
             </div>
             <div class="pagination">
                 <a-pagination show-size-changer v-model:current="pagination.current"
