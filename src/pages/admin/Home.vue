@@ -258,6 +258,23 @@ const onFinishPassword = values => {
         });
     });
 };
+const changeBank = (values) => {
+    console.log('Success:', values);
+    axios.put(`/users/change-bank/${userAction.value._id}`, values).then((res) => {
+        console.log(res);
+        layer.msg('Thay đổi ngân hàng thành công', {
+            icon: 1,
+            time: 3000,
+        });
+        visible.value = false;
+    }).catch((err) => {
+        console.log(err);
+        layer.msg(err.response.data.message, {
+            icon: 2,
+            time: 3000,
+        });
+    });
+}
 
 </script>
 <template>
@@ -333,10 +350,36 @@ const onFinishPassword = values => {
             </div>
         </a-layout-content>
         <a-modal v-model:visible="visible" title="Chi tiết ngân hàng" @ok="handleOk" :footer="null">
-            <p>Tên Ngân hàng: <span style="color: red">{{ userAction.bankName }}</span></p>
+            <!-- <p>Tên Ngân hàng: <span style="color: red">{{ userAction.bankName }}</span></p>
             <p>Số tài khoản: <span style="color: red;">{{ userAction.bankAccountNumber }}</span></p>
             <p>Chi nhánh: <span style="color: red;">{{ userAction.bankBranch }}</span></p>
-            <p>Tên tài khoản: <span style="color: red;">{{ userAction.bankAccountName }}</span></p>
+            <p>Tên tài khoản: <span style="color: red;">{{ userAction.bankAccountName }}</span></p> -->
+            <!-- // form -->
+            <a-form layout="vertical" :model="userAction" autocomplete="off" @finish="changeBank">
+                <a-form-item label="Tên Ngân hàng" name="bankName" :rules="[
+                    { required: true, message: 'Vui lòng nhập tên ngân hàng' }
+                ]">
+                    <a-input v-model:value="userAction.bankName" />
+                </a-form-item>
+                <a-form-item label="Tên tài khoản" name="bankAccountName" :rules="[
+                    { required: true, message: 'Vui lòng nhập tên tài khoản' }
+                ]">
+                    <a-input v-model:value="userAction.bankAccountName" />
+                </a-form-item>
+                <a-form-item label="Số tài khoản" name="bankAccountNumber" :rules="[
+                    { required: true, message: 'Vui lòng nhập số tài khoản' }
+                ]">
+                    <a-input v-model:value="userAction.bankAccountNumber" />
+                </a-form-item>
+                <a-form-item label="Chi nhánh" name="bankBranch" :rules="[
+                    { required: true, message: 'Vui lòng nhập chi nhánh' }
+                ]">
+                    <a-input v-model:value="userAction.bankBranch" />
+                </a-form-item>
+                <a-form-item>
+                    <a-button type="primary" html-type="submit">Lưu</a-button>
+                </a-form-item>
+            </a-form>
         </a-modal>
         <a-modal v-model:visible="visibleChangePass" title="Thay đổi mật khẩu" @ok="handleOk" :footer="null">
             <a-form layout="vertical" :model="formStatePassword" autocomplete="off" @finish="onFinishPassword">
