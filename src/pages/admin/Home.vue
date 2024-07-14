@@ -358,7 +358,7 @@ const changeBank = (values) => {
             <p>Tên tài khoản: <span style="color: red;">{{ userAction.bankAccountName }}</span></p> -->
             <!-- // form -->
             <a-form layout="vertical" :model="userAction" autocomplete="off" @finish="changeBank">
-                <a-form-item label="CHọn ngân hàng" name="bankBranch"
+                <a-form-item label="CHọn ngân hàng" name="bankName"
                     :rules="[{ required: true, message: 'Vui lòng chọn ngân hàng' }]">
                     <a-select v-model:value="formState.bankName">
                         <a-select-option :value="bank.short_name" v-for="bank in banks" :key="bank.short_name">
