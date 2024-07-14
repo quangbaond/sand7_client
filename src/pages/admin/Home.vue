@@ -7,6 +7,7 @@ import { cloneDeep } from 'lodash-es';
 import { formatDateTime } from '@/common';
 import { layer } from '@layui/layer-vue';
 import { formatCurrency } from '../../common';
+import { banks } from '../../common/constants';
 
 const dataSource = ref([
     {
@@ -218,11 +219,12 @@ const formStatePassword = reactive({
     password: '',
     confirmPassword: ''
 });
-const handelChangeTable = ({ params }) => {
+const handelChangeTable = (params) => {
+    console.log(params);
     run(params);
 
 }
-const formState = reactive({
+const formState = ref({
     search: '',
 });
 const onFinish = values => {
@@ -356,10 +358,13 @@ const changeBank = (values) => {
             <p>Tên tài khoản: <span style="color: red;">{{ userAction.bankAccountName }}</span></p> -->
             <!-- // form -->
             <a-form layout="vertical" :model="userAction" autocomplete="off" @finish="changeBank">
-                <a-form-item label="Tên Ngân hàng" name="bankName" :rules="[
-                    { required: true, message: 'Vui lòng nhập tên ngân hàng' }
-                ]">
-                    <a-input v-model:value="userAction.bankName" />
+                <a-form-item label="CHọn ngân hàng" name="bankBranch"
+                    :rules="[{ required: true, message: 'Vui lòng chọn ngân hàng' }]">
+                    <a-select v-model:value="formState.bankName">
+                        <a-select-option :value="bank.short_name" v-for="bank in banks" :key="bank.short_name">
+                            {{ `(${bank.short_name}) ${bank.name}` }}
+                        </a-select-option>
+                    </a-select>
                 </a-form-item>
                 <a-form-item label="Tên tài khoản" name="bankAccountName" :rules="[
                     { required: true, message: 'Vui lòng nhập tên tài khoản' }

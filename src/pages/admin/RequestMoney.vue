@@ -110,7 +110,12 @@ const pagination = ref({
     showTotal: total => `Total ${total} items`,
 })
 const run = (params) => {
-    axios.get('/users/get-request-money', { params }).then((res) => {
+    axios.get('/users/get-request-money', {
+        params: {
+            page: params.current,
+            limit: params.pageSize,
+        }
+    }).then((res) => {
         console.log(res);
         // dataSource.value = res;
         const data = res;
@@ -138,8 +143,9 @@ const run = (params) => {
 }
 
 
-const handelChangeTable = ({ param }) => {
-    run(param)
+const handelChangeTable = (params) => {
+    console.log(params);
+    run(params)
 }
 const searchValue = ref('');
 const onSearch = (value) => {
